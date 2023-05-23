@@ -1,0 +1,4 @@
+Available commands:
+  help
+  setup
+  auth-proxy install
