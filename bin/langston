@@ -1,8 +1,8 @@
 #!/bin/bash
 CURRENT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-cat $CURRENT_DIR/../banner.txt
-echo "CLI version $(cat $CURRENT_DIR/../VERSION.txt)"
+cat "$CURRENT_DIR"/../banner.txt
+echo "CLI version $(cat "$CURRENT_DIR"/../VERSION.txt)"
 echo
 
 COMMAND=$1
@@ -11,13 +11,13 @@ PROGRAM=$2
 if [[ $COMMAND == 'auth-proxy' ]]; then
   if [[ $PROGRAM == 'install' ]]; then
     echo "Running install Google Auth Proxy"
-    $CURRENT_DIR/scripts/auth-proxy/install.sh
+    "$CURRENT_DIR"/scripts/auth-proxy/install.sh
   else
     echo "Program $PROGRAM not recognized. Did you mean \"auth-proxy install\"?."
   fi
 elif [[ $COMMAND == 'setup' ]]; then
   chmod +x "$CURRENT_DIR/scripts/configure/bin.sh"
-  $CURRENT_DIR/scripts/configure/bin.sh
+  "$CURRENT_DIR"/scripts/configure/bin.sh
   echo "Setup completed"
   echo
   cat "$CURRENT_DIR/../COMMANDS.txt"
