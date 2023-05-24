@@ -1,5 +1,9 @@
+Usage: langston <COMMAND>
+
 Available commands:
-  help
-  setup
-  install
-  auth-proxy install
+    help - prints this list of commands
+    install - installs the command line tools
+    update - checks for available updates
+    version - prints the currently installed version of the commandline tools
+    auth-proxy <COMMAND>
+        install - installs Google Auth Proxy
