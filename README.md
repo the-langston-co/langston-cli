@@ -1,9 +1,14 @@
 # Langston CLI Tools
-Command Line Interface and scripts
+Command Line Interface for Langston employees
+
+<!-- toc -->
+
+<!-- tocstop -->
 
 # Installation
 
-To install, download the `tar.gz` file and "extract" it on your computer. Typically, this is done simply by double clicking on the file you downloaded. Open the folder that was created (called `langston-cli-v1.x.x`) and `right-click` on the file named `install`. This should open up the Terminal. A warning may pop up asking you to confirm you want to run the file. Click Yes.
+To install, visit the [Releases](https://github.com/the-langston-co/langston-cli/releases) page and on the latest release, download the `tar.gz` file and "extract" it on your computer. 
+Typically, this is done simply by double-clicking on the file you downloaded. Open the folder that was created (called `langston-cli-v1.x.x`) and `right-click` on the file named `install`. This should open up the Terminal. A warning may pop up asking you to confirm you want to run the file. Click Yes.
 
 If everything goes well, you should see a message that says the installation was complete. 
 
@@ -16,7 +21,9 @@ which langston
 
 If you see a message that looks like `/Users/yourname/langston-cli/bin/langston`, then everything is set up correctly! 
 
-# Use
+_Note: a new directory will be created in the "Home" directory on your computer called `langston-cli`_. 
+
+# Commands & Usage
 
 ```shell
 # Install google auth proxy

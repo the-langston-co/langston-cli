@@ -6,3 +6,6 @@ dist/
 *.tar.gz
 .DS_Store
 README.md
+node_modules/
+package.json
+package.*.json
