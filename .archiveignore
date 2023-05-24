@@ -1,7 +1,6 @@
 .git/
 .idea/
 .gitignore
-.cliignore
 dist/
 *.tar.gz
 .DS_Store

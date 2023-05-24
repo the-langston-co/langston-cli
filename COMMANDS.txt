@@ -1,4 +1,5 @@
 Available commands:
   help
   setup
+  install
   auth-proxy install

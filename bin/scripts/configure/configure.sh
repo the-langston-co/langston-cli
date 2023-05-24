@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "Configuring CLI"
 
 LANGSTON_BIN="$HOME/langston-cli/bin"
@@ -7,15 +9,13 @@ CLI_ROOT=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && cd ../..
 echo
 echo "Copying files to $HOME/langston-cli..."
 # Copy files to the home directory, ignoring files in .cliignore
-rsync -aq --exclude-from="$CLI_ROOT/.cliignore" "$CLI_ROOT" "$HOME"
+rsync -aq --exclude-from="$CLI_ROOT/.cliignore" --exclude "$CLI_ROOT/install.sh" "$CLI_ROOT" "$HOME"
 
 path_to_executable=$(which langston)
- if [ -x "$path_to_executable" ] ; then
-    echo "langston-cli is installed here: $path_to_executable"
-    exit
- fi
-
-
+if [ -x "$path_to_executable" ] ; then
+  echo "langston-cli is installed here: $path_to_executable"
+  exit
+fi
 
 if [[ ":$PATH:" == *":$LANGSTON_BIN:"* ]]; then
   echo "Your path correctly includes \"$LANGSTON_BIN\""
@@ -46,3 +46,13 @@ fi
 
 # Add new bin to current path
 PATH="${LANGSTON_BIN}:\$PATH"
+
+
+path_to_executable=$(which langston)
+if [ -x "$path_to_executable" ] ; then
+  echo "langston successfully is installed to: $path_to_executable"
+  exit
+else
+  echo "langston-cli failed to install correctly. Please reach out for assistance."
+  exit 1
+fi
