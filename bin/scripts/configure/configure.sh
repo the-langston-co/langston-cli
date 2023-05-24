@@ -27,6 +27,7 @@ if [[ $SHELL == '/bin/zsh' ]]; then
     echo "Path already exported"
   else
     echo "Adding Langston CLI to .zshrc"
+    touch -a ~/.zshrc
     echo -e '\n#FROM LANGSTON-CLI' >> ~/.zshrc
     echo -e "export PATH=${LANGSTON_BIN}:\$PATH" >> ~/.zshrc
 #    source ~/.zshrc
@@ -36,6 +37,7 @@ elif [[ $SHELL == '/bin/bash' ]]; then
       echo "Path already exported"
   else
     echo "Adding Langston CLI to .bash_profile"
+    touch -a ~/.bash_profile
     echo -e '\n#FROM LANGSTON-CLI' >> ~/.bash_profile
     echo -e "export PATH=${LANGSTON_BIN}:\$PATH" >> ~/.bash_profile
     #  source ~/.bash_profile
