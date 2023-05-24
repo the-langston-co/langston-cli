@@ -3,6 +3,12 @@ Command Line Interface for Langston employees
 
 <!-- toc -->
 
+- [Installation](#installation)
+- [Commands & Usage](#commands--usage)
+- [Developers](#developers)
+  * [Create a new release artifact](#create-a-new-release-artifact)
+  * [Extract the archive](#extract-the-archive)
+
 <!-- tocstop -->
 
 # Installation
@@ -47,4 +53,12 @@ rm -rf dist && mkdir -p dist && tar -zcvf "dist/langston-cli-$(cat resources/VER
 # Unpack/extract the tarball into the langston-cli directory.
 # Run this command from the location that the tarball was downloaded
 mkdir -p langston-cli && tar -xzvf langston-cli.tar.gz -C langston-cli
+```
+
+## Update the TOC in this README
+
+Run the following command to automatically update the table of contents (TOC) of this README.md. Enter `y` when prompted to proceed with writing to file.
+
+```shell
+npx markdown-toc -i README.md 
 ```
