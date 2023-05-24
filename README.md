@@ -28,10 +28,10 @@ langston auth-proxy install
 The following section is for developers
 
 ## Create a new release artifact
-
+Prior to making a new release, be sure to bump the version in `resources/VERSION.txt`!
 ```shell
 # Creates a tarball in the dist/ folder
-rm -rf dist && mkdir -p dist && tar -zcvf dist/langston-cli.tar.gz --exclude-from=".archiveignore" .
+rm -rf dist && mkdir -p dist && tar -zcvf "dist/langston-cli-$(cat resources/VERSION.txt | tr -d " \t\n\r" ).tar.gz" --exclude-from=".archiveignore" .
 ```
 
 ## Extract the archive
