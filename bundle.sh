@@ -7,7 +7,6 @@ mkdir -p dist
 VERSION=$(cat resources/VERSION.txt | tr -d " \t\n\r")
 PROPOSED_VERSION=$1
 VERSION_REGEX="^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
-echo "proposed version \"$PROPOSED_VERSION\""
 
 if [ -z "$PROPOSED_VERSION" ]; then
   echo "No version provided, using current version of $VERSION"
@@ -28,9 +27,7 @@ fi
 
 echo -n "$VERSION" > resources/VERSION.txt
 
-echo "Creating bundle for version $VERSION"
-
 # Bundle the contents as a tarball, excluding files & folders listed in `.archiveignore`
 tar -zcf "dist/langston-cli-$VERSION.tar.gz" --exclude-from=".archiveignore" .
 
-echo "Bundle created at: dist/langston-cli-$VERSION.tar.gz"
+echo "Release artifact created at ./dist/langston-cli-$VERSION.tar.gz"
