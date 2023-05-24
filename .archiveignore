@@ -8,3 +8,4 @@ README.md
 node_modules/
 package.json
 package.*.json
+bundle.sh

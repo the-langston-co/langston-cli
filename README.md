@@ -41,11 +41,15 @@ langston auth-proxy install
 The following section is for developers
 
 ## Create a new release artifact
-Prior to making a new release, be sure to bump the version in `resources/VERSION.txt`!
+
+Run the `bundle.sh` command. Optionally provide the version as the first argument. This will update the version in the `resources/VERSION.txt` file as well as tag the commit in git.
+
 ```shell
-# Creates a tarball in the dist/ folder
-rm -rf dist && mkdir -p dist && tar -zcvf "dist/langston-cli-$(cat resources/VERSION.txt | tr -d " \t\n\r" ).tar.gz" --exclude-from=".archiveignore" .
+# Bundle the code and update the version. Version is optional.
+./bundle.sh vX.X.X
 ```
+
+The file will be created at `dist/langston-cli-${VERSION}.tar.gz`. Each time you run the above command, the contents of `dist/` will be emptied prior to the new archive being created.
 
 ## Extract the archive
 
