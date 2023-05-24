@@ -1,6 +1,6 @@
 #!/bin/bash
 echo
-echo "Installing the Langston CLI"
+echo "Installing the Langston CLI from $CURRENT_DIR"
 echo
 CURRENT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 "$CURRENT_DIR"/bin/langston install

@@ -2,18 +2,20 @@
 
 echo "Configuring CLI"
 
-LANGSTON_BIN="$HOME/langston-cli/bin"
+INSTALL_DIR="$HOME/langston-cli"
+LANGSTON_BIN="$INSTALL_DIR/bin"
 CURRENT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 CLI_ROOT=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && cd ../../.. && pwd )
 
 echo
-echo "Copying files to $HOME/langston-cli..."
-# Copy files to the home directory, ignoring files in .cliignore
-rsync -aq --exclude-from="$CLI_ROOT/.cliignore" --exclude "$CLI_ROOT/install.sh" "$CLI_ROOT" "$HOME"
+echo "Copying files to $INSTALL_DIR from $CURRENT_DIR..."
+# Copy files to the install directory, ignoring files in .cliignore
+mkdir -p "$INSTALL_DIR"
+rsync -a --exclude-from="$CLI_ROOT/.cliignore" --exclude "$CLI_ROOT/install.sh" "$CLI_ROOT/" "$INSTALL_DIR"
 
-path_to_executable=$(which langston)
-if [ -x "$path_to_executable" ] ; then
-  echo "langston-cli is installed here: $path_to_executable"
+PATH_TO_EXECUTABLE=$(which langston)
+if [ -x "$PATH_TO_EXECUTABLE" ] ; then
+  echo "langston-cli is installed here: $PATH_TO_EXECUTABLE"
   exit
 fi
 
@@ -50,11 +52,15 @@ fi
 PATH="${LANGSTON_BIN}:\$PATH"
 
 
-path_to_executable=$(which langston)
-if [ -x "$path_to_executable" ] ; then
-  echo "langston successfully is installed to: $path_to_executable"
+PATH_TO_EXECUTABLE=$(which langston)
+if [ -x "$PATH_TO_EXECUTABLE" ] ; then
+  echo "langston successfully is installed to: $PATH_TO_EXECUTABLE"
   exit
 else
-  echo "langston-cli failed to install correctly. Please reach out for assistance."
+  echo
+  echo "******************************************************************************"
+  echo " langston-cli failed to install correctly. Please reach out for assistance. "
+  echo "******************************************************************************"
+  echo
   exit 1
 fi

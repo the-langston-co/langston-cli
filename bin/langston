@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 CURRENT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 cat "$CURRENT_DIR"/../resources/banner.txt
