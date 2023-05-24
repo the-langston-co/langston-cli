@@ -2,8 +2,8 @@
 
 CURRENT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-cat "$CURRENT_DIR"/../banner.txt
-echo "CLI version $(cat "$CURRENT_DIR"/../VERSION.txt)"
+cat "$CURRENT_DIR"/../resources/banner.txt
+echo "CLI version $(cat "$CURRENT_DIR"/../resources/VERSION.txt)"
 echo
 
 COMMAND=$1
@@ -24,9 +24,9 @@ elif [[ $COMMAND == 'setup' || $COMMAND == 'install' ]]; then
   echo "* Langston CLI Setup completed! *"
   echo "*********************************"
   echo
-  cat "$CURRENT_DIR/../COMMANDS.txt"
+  cat "$CURRENT_DIR/../resources/COMMANDS.txt"
 elif [[ $COMMAND == '' || $COMMAND == 'help' ]]; then
-  cat "$CURRENT_DIR/../COMMANDS.txt"
+  cat "$CURRENT_DIR/../resources/COMMANDS.txt"
 else
   echo "Command \"$COMMAND\" not recognized"
 fi
