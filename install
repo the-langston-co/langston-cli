@@ -2,5 +2,5 @@
 set -e
 CURRENT_DIR=$(dirname $0)
 # Setup langston directories
-cd bin
+cd "$CURRENT_DIR/bin"
 ./langston install
