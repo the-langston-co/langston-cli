@@ -13,21 +13,22 @@ if [ -z "$PROPOSED_VERSION" ]; then
 elif [[ "$PROPOSED_VERSION" =~ ${VERSION_REGEX} ]]; then
   echo "Setting version to \"$PROPOSED_VERSION\""
   VERSION=$PROPOSED_VERSION
-  git add resources/VERSION.txt
-  git commit -m"'Update version to $VERSION'"
 #  echo -n "$PROPOSED_VERSION" > resources/VERSION.txt
 else
   echo "Invalid version provided: \"$PROPOSED_VERSION\". Must match semversion format of vX.X.X. Notice the \"v\" at the beginning. All values for \"X\" must be numeric"
   exit 1
 fi
 
+echo -n "$VERSION" > resources/VERSION.txt
+
+git add resources/VERSION.txt
+git commit -m"'Update version to $VERSION'"
+
 if git tag "$VERSION" ; then
   echo "Successfully created Git tag $VERSION"
 else
   exit 1
 fi
-
-echo -n "$VERSION" > resources/VERSION.txt
 
 # Bundle the contents as a tarball, excluding files & folders listed in `.archiveignore`
 tar -zcf "dist/langston-cli-$VERSION.tar.gz" --exclude-from=".archiveignore" .
