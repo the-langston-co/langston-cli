@@ -5,11 +5,18 @@ PORT=3306
 echo
 echo "Starting auth proxy for env \"${ENV}\""
 
+SERVICE_ACCOUNT_FILE="$HOME/langston-cli/db-service-account-$ENV.json"
+
+if [[ ! -f "$SERVICE_ACCOUNT_FILE" ]]; then
+  echo "🛑  No service account file found for $ENV ($SERVICE_ACCOUNT_FILE). You may need to run \"langston auth $ENV\" to configure the necessary credentials."
+  exit 1
+fi
+
 INSTANCE_NAME=prod-instance
 if [[ $ENV == 'stage' ]]; then
   INSTANCE_NAME=langston-stage:us-central1:langston-db-dev
 else
-  echo "⚠️ Prod database is not yet supported. Exiting."
+  echo "⚠️  Prod database is not yet supported. Exiting."
   exit
 fi
 
@@ -29,7 +36,7 @@ if [ "$LIVENESS_CODE" -eq 200 ]; then
 fi
 
 # Run cloud sql proxy in background.
-cloud-sql-proxy --port $PORT "$INSTANCE_NAME" --gcloud-auth --quitquitquit --health-check &> /dev/null &
+cloud-sql-proxy --port $PORT "$INSTANCE_NAME" --credentials-file $SERVICE_ACCOUNT_FILE --quitquitquit --health-check &> /dev/null &
 
 echo
 echo "✅  cloud-sql-proxy started!"

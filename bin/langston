@@ -7,6 +7,9 @@ RESOURCES_DIR="$CURRENT_DIR/../resources"
 cd "$CURRENT_DIR"
 cat "$RESOURCES_DIR/banner.txt"
 
+echo "pwd: $(pwd)"
+echo "CURRENT_DIR: $CURRENT_DIR"
+echo "scripts: $SCRIPTS_DIR"
 echo
 
 COMMAND=$1
@@ -41,6 +44,8 @@ elif [[ $COMMAND == 'setup' || $COMMAND == 'install' ]]; then
   cat "$RESOURCES_DIR/COMMANDS.txt"
 elif [[ $COMMAND == 'update' ]]; then
   "$SCRIPTS_DIR/configure/update-check.sh"
+elif [[ $COMMAND == 'auth' ]]; then
+  "$SCRIPTS_DIR/configure/auth.sh" $PROGRAM
 elif [[ $COMMAND == '' || $COMMAND == 'help' ]]; then
   cat "$RESOURCES_DIR/COMMANDS.txt"
 elif [[ $COMMAND == 'version' || $COMMAND == 'v' ]]; then

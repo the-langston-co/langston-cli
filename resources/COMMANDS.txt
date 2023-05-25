@@ -5,5 +5,9 @@ Available commands:
     install - installs the command line tools
     update - checks for available updates
     version - prints the currently installed version of the commandline tools
+    auth <ENV> - set up your service account. ENV is optional
+        prod - (default) set up for production environment. If no value is provided, this will be used.
+        stage - set up for stage environment
+        dev - set up for local dev environment
     auth-proxy <COMMAND>
         install - installs Google Auth Proxy
