@@ -1,0 +1,9 @@
+Usage: langston auth-proxy <COMMAND>
+
+Available commands:
+    check
+    help
+    install
+    start
+    start-stage
+    stop

@@ -1,22 +1,35 @@
 #!/bin/bash
 set -e
 CURRENT_DIR=$(dirname $0)
-BASEDIR=$(dirname $0)
+SCRIPTS_DIR="$CURRENT_DIR/scripts"
+RESOURCES_DIR="$CURRENT_DIR/../resources"
 
 cd "$CURRENT_DIR"
-cat "$CURRENT_DIR"/../resources/banner.txt
-echo -e "langston-cli version $(cat "$CURRENT_DIR"/../resources/VERSION.txt)"
+cat "$RESOURCES_DIR/banner.txt"
+
 echo
 
 COMMAND=$1
 PROGRAM=$2
 
 if [[ $COMMAND == 'auth-proxy' ]]; then
+  cd scripts/auth-proxy
   if [[ $PROGRAM == 'install' ]]; then
-    echo "Running install Google Auth Proxy"
-    "$CURRENT_DIR"/scripts/auth-proxy/install.sh
+    ./install.sh
+  elif [[ $PROGRAM == 'start' ]]; then
+    ./start.sh
+  elif [[ $PROGRAM == 'start-stage' ]]; then
+    ./start.sh stage
+  elif [[ $PROGRAM == 'stop' ]]; then
+      ./stop.sh
+  elif [[ $PROGRAM == 'check' ]]; then
+      ./check.sh
+  elif [[ $PROGRAM == 'help' ]]; then
+    cat "$SCRIPTS_DIR/auth-proxy/HELP.txt"
   else
-    echo "Program $PROGRAM not recognized. Did you mean \"auth-proxy install\"?."
+    echo "❓ auth-proxy command \"$PROGRAM\" not recognized."
+    echo
+    cat "$SCRIPTS_DIR/auth-proxy/HELP.txt"
   fi
 elif [[ $COMMAND == 'setup' || $COMMAND == 'install' ]]; then
   "$CURRENT_DIR"/scripts/configure/install.sh
@@ -25,13 +38,16 @@ elif [[ $COMMAND == 'setup' || $COMMAND == 'install' ]]; then
   echo "🎉 Langston CLI Installed successfully! 🎉"
   echo "*******************************************"
   echo
-  cat "$CURRENT_DIR/../resources/COMMANDS.txt"
+  cat "$RESOURCES_DIR/COMMANDS.txt"
 elif [[ $COMMAND == 'update' ]]; then
-  "$CURRENT_DIR"/scripts/configure/update-check.sh
+  "$SCRIPTS_DIR/configure/update-check.sh"
 elif [[ $COMMAND == '' || $COMMAND == 'help' ]]; then
-  cat "$CURRENT_DIR/../resources/COMMANDS.txt"
+  cat "$RESOURCES_DIR/COMMANDS.txt"
+elif [[ $COMMAND == 'version' || $COMMAND == 'v' ]]; then
+  echo -e "langston-cli version $(cat "$CURRENT_DIR"/../resources/VERSION.txt)"
 else
   echo "Command \"$COMMAND\" not recognized"
 fi
 
+echo
 echo
