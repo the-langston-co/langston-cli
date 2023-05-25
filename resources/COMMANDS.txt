@@ -1,13 +1,18 @@
 Usage: langston <COMMAND>
 
 Available commands:
-    help - prints this list of commands
-    install - installs the command line tools
-    update - checks for available updates
-    version - prints the currently installed version of the commandline tools
     auth <ENV> - set up your service account. ENV is optional
         prod - (default) set up for production environment. If no value is provided, this will be used.
         stage - set up for stage environment
         dev - set up for local dev environment
     auth-proxy <COMMAND>
+        check - check the status of the Auth Proxy service
+        help - show details about the commands that are available
         install - installs Google Auth Proxy
+        start - start the production connection
+        start-stage - start the stage connection
+        stop - stop the Auth Proxy service
+    help - prints this list of commands
+    install - installs the command line tools
+    update - checks for available updates
+    version - prints the currently installed version of the commandline tools

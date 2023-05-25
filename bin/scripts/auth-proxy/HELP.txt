@@ -1,9 +1,9 @@
 Usage: langston auth-proxy <COMMAND>
 
 Available commands:
-    check
-    help
-    install
-    start
-    start-stage
-    stop
+    check - check the status of the Auth Proxy service
+    help - show details about the commands that are available
+    install - installs Google Auth Proxy
+    start - start the production connection
+    start-stage - start the stage connection
+    stop - stop the Auth Proxy service
