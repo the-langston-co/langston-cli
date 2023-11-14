@@ -5,12 +5,10 @@ SCRIPTS_DIR="$CURRENT_DIR/scripts"
 RESOURCES_DIR="$CURRENT_DIR/../resources"
 
 cd "$CURRENT_DIR"
-cat "$RESOURCES_DIR/banner.txt"
-
-echo "pwd: $(pwd)"
-echo "CURRENT_DIR: $CURRENT_DIR"
-echo "scripts: $SCRIPTS_DIR"
-echo
+#echo "pwd: $(pwd)"
+#echo "CURRENT_DIR: $CURRENT_DIR"
+#echo "scripts: $SCRIPTS_DIR"
+#echo
 
 COMMAND=$1
 PROGRAM=$2
@@ -18,8 +16,12 @@ PROGRAM=$2
 if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
   cd scripts/auth-proxy
   if [[ $PROGRAM == 'install' ]]; then
+    cat "$RESOURCES_DIR/banner.txt"
+    echo
     ./install.sh
   elif [[ $PROGRAM == 'start' ]]; then
+    cat "$RESOURCES_DIR/banner.txt"
+    echo
     if ! command -v cloud-sql-proxy &> /dev/null
     then
         echo "cloud-sql-proxy has not been installed yet. Installing it now...."
@@ -27,10 +29,16 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
     fi
     ./start.sh "$3"
   elif [[ $PROGRAM == 'start-stage' ]]; then
+    cat "$RESOURCES_DIR/banner.txt"
+    echo
     ./start.sh stage
   elif [[ $PROGRAM == 'stop' ]]; then
+      cat "$RESOURCES_DIR/banner.txt"
+      echo
       ./stop.sh "$3"
   elif [[ $PROGRAM == 'check' || $PROGRAM == 'status' ]]; then
+      cat "$RESOURCES_DIR/banner.txt"
+      echo
       if [[ $3 == 'all' ]]; then
         ./check.sh stage
         echo
@@ -39,6 +47,8 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
         ./check.sh "$3"
       fi
   elif [[ $PROGRAM == 'help' ]]; then
+    cat "$RESOURCES_DIR/banner.txt"
+    echo
     cat "$SCRIPTS_DIR/auth-proxy/HELP.txt"
   else
     echo "❓ auth-proxy command \"$PROGRAM\" not recognized."
@@ -59,11 +69,8 @@ elif [[ $COMMAND == 'auth' ]]; then
   "$SCRIPTS_DIR/configure/auth.sh" $PROGRAM
 elif [[ $COMMAND == '' || $COMMAND == 'help' ]]; then
   cat "$RESOURCES_DIR/COMMANDS.txt"
-elif [[ $COMMAND == 'version' || $COMMAND == 'v' ]]; then
-  echo -e "langston-cli version $(cat "$CURRENT_DIR"/../resources/VERSION.txt)"
+elif [[ $COMMAND == 'version' || $COMMAND == 'v' || $COMMAND == '-v' || $COMMAND == '--version' ]]; then
+  echo -e "$(cat "$CURRENT_DIR"/../resources/VERSION.txt)"
 else
   echo "Command \"$COMMAND\" not recognized"
 fi
-
-echo
-echo

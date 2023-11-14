@@ -26,8 +26,8 @@ else
   echo "✅  Homebrew installed successfully"
 fi
 
-PATH_TO_EXECUTABLE=$(which jq)
-if [ -x "$PATH_TO_EXECUTABLE" ] ; then
+PATH_TO_JQ=$(which jq)
+if [ -x "$PATH_TO_JQ" ] ; then
   echo "✅  jq installed"
 else
   echo "installing JQ..."
