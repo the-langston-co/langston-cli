@@ -15,18 +15,29 @@ echo
 COMMAND=$1
 PROGRAM=$2
 
-if [[ $COMMAND == 'auth-proxy' ]]; then
+if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
   cd scripts/auth-proxy
   if [[ $PROGRAM == 'install' ]]; then
     ./install.sh
   elif [[ $PROGRAM == 'start' ]]; then
-    ./start.sh
+    if ! command -v cloud-sql-proxy &> /dev/null
+    then
+        echo "cloud-sql-proxy has not been installed yet. Installing it now...."
+        ./install.sh
+    fi
+    ./start.sh "$3"
   elif [[ $PROGRAM == 'start-stage' ]]; then
     ./start.sh stage
   elif [[ $PROGRAM == 'stop' ]]; then
-      ./stop.sh
-  elif [[ $PROGRAM == 'check' ]]; then
-      ./check.sh
+      ./stop.sh "$3"
+  elif [[ $PROGRAM == 'check' || $PROGRAM == 'status' ]]; then
+      if [[ $3 == 'all' ]]; then
+        ./check.sh stage
+        echo
+        ./check.sh prod
+      else
+        ./check.sh "$3"
+      fi
   elif [[ $PROGRAM == 'help' ]]; then
     cat "$SCRIPTS_DIR/auth-proxy/HELP.txt"
   else

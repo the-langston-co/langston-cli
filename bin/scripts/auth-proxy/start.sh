@@ -1,7 +1,10 @@
 #!/bin/zsh
 
 ENV=${1:='prod'}
-PORT=3306
+DB_PORT=3307
+HTTP_PORT=9050
+ADMIN_PORT=9051
+
 echo
 echo "Starting auth proxy for env \"${ENV}\""
 
@@ -15,18 +18,23 @@ fi
 INSTANCE_NAME=prod-instance
 if [[ $ENV == 'stage' ]]; then
   INSTANCE_NAME=langston-stage:us-central1:langston-db-dev
-else
-  echo "⚠️  Prod database is not yet supported. Exiting."
-  exit
+  DB_PORT=3306
+  HTTP_PORT=9090
+  ADMIN_PORT=9091
+elif [[ $ENV == 'prod' ]]; then
+  INSTANCE_NAME=langston-prod:us-central1:langston-prod
+  DB_PORT=3307
+  HTTP_PORT=9050
+  ADMIN_PORT=9051
 fi
 
-# TODO: Use credentials file with service account
-
-echo "Using instanceName $INSTANCE_NAME on port $PORT"
+echo "Starting instanceName $INSTANCE_NAME on port $DB_PORT"
+echo "   Admin Port: ${ADMIN_PORT}"
+echo "   HTTP Port: ${HTTP_PORT}"
 echo
 
 # Check if already running
-LIVENESS_URL=http://localhost:9090/liveness
+LIVENESS_URL="http://localhost:${HTTP_PORT}/liveness"
 LIVENESS_CODE=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST $LIVENESS_URL)
 
 if [ "$LIVENESS_CODE" -eq 200 ]; then
@@ -36,7 +44,8 @@ if [ "$LIVENESS_CODE" -eq 200 ]; then
 fi
 
 # Run cloud sql proxy in background.
-cloud-sql-proxy --port $PORT "$INSTANCE_NAME" --credentials-file $SERVICE_ACCOUNT_FILE --quitquitquit --health-check &> /dev/null &
+echo "running: cloud-sql-proxy --port $DB_PORT $INSTANCE_NAME --credentials-file $SERVICE_ACCOUNT_FILE --quitquitquit --health-check --http-port $HTTP_PORT --admin-port $ADMIN_PORT &> /dev/null &"
+cloud-sql-proxy --port $DB_PORT "$INSTANCE_NAME" --credentials-file "$SERVICE_ACCOUNT_FILE" --quitquitquit --health-check --http-port "$HTTP_PORT" --admin-port "$ADMIN_PORT" &> /dev/null &
 
 echo
 echo "✅  cloud-sql-proxy started!"

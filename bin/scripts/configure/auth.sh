@@ -15,8 +15,7 @@ if [[ $ENV == 'stage' ]]; then
 elif [[ $ENV == 'dev' ]]; then
   HOST="http://localhost:3000"
 elif [[ $ENV == 'prod' ]]; then
-  echo "⚠️ prod is not yet supported. Try stage or dev"
-  exit 1
+  HOST="https://api.thelangstonco.com"
 fi
 
 
