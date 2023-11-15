@@ -20,16 +20,6 @@ else
   echo "✅  Homebrew installed successfully"
 fi
 
-# Then, install wget
-if [ -x "$(which wget)" ] ; then
-  echo "✅  wget already installed"
-else
-  echo "installing wget..."
-  brew install wget
-  echo "✅  wget installed"
-fi
-
-
 echo
 echo "Downloading langston-cli..."
 echo
