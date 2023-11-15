@@ -49,4 +49,4 @@ else
   exit 1
 fi
 echo "Extracting files to ${CLI_DIR}..."
-tar -xzvf "${DOWNLOAD_FILENAME}" -C ..
+tar -xzf "${DOWNLOAD_FILENAME}" -C ..
