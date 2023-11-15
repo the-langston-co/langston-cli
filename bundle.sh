@@ -29,6 +29,7 @@ if git tag "$VERSION" &> /dev/null ; then
 else
   echo "Tag ${VERSION} already exists!"
 fi
+git push origin
 git push origin --tags
 echo
 # Bundle the contents as a tarball, excluding files & folders listed in `.archiveignore`
