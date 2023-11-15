@@ -29,7 +29,8 @@ if git tag "$VERSION" &> /dev/null ; then
 else
   echo "Tag ${VERSION} already exists!"
 fi
-
+git push origin --tags
+echo
 # Bundle the contents as a tarball, excluding files & folders listed in `.archiveignore`
 tar -zcf "dist/langston-cli-$VERSION.tar.gz" --exclude-from=".archiveignore" .
 

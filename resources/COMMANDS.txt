@@ -17,5 +17,6 @@ Available commands:
         stop <ENV> - stop the Auth Proxy service. ENV defaults to "prod"
     help - prints this list of commands
     install - installs the command line tools
-    update - checks for available updates
+    update - checks for available updates with option to upgrade to latest
+    download - forces an upgrade to the latest version. Will re-install even if versions match.
     version - prints the currently installed version of the commandline tools
