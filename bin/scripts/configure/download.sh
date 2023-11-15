@@ -40,7 +40,9 @@ LATEST_VERSION=$(jq -r ".[0].tag_name" <<< "$RELEASES")
 DOWNLOAD_FILENAME="langston-cli-${LATEST_VERSION}.tar.gz"
 echo "downloading langston-cli archive from ${DOWNLOAD_URL}"
 echo
-wget -q -O "$DOWNLOAD_FILENAME" "$DOWNLOAD_URL"
+curl -o "$DOWNLOAD_FILENAME" "$DOWNLOAD_URL"
+
+echo "Langston CLI downloaded from "
 
 if [ -f "${DOWNLOAD_FILENAME}" ] ; then
   echo "✅  Downloaded langston-cli to ${DOWNLOAD_DIR}/${DOWNLOAD_FILENAME}"
@@ -50,3 +52,6 @@ else
 fi
 echo "Extracting files to ${CLI_DIR}..."
 tar -xzf "${DOWNLOAD_FILENAME}" -C ..
+
+echo "Files extracted from archive. Contents of ~/langston-cli are:"
+ls -la "${CLI_DIR}"
