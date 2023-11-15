@@ -20,6 +20,21 @@ else
   echo "✅  Homebrew installed successfully"
 fi
 
+PATH_TO_JQ=$(which jq)
+if [ -x "$PATH_TO_JQ" ] ; then
+  echo "✅  jq installed"
+else
+  echo "installing JQ..."
+#  echo "Please enter the password to your computer to perform the installation"
+  brew install jq
+  echo "✅  jq installed"
+fi
+
+
+if ! [ -x "$PATH_TO_JQ" ] ; then
+  echo "❌  jq is not installed, can not continue."
+fi
+
 echo
 echo "Downloading langston-cli..."
 echo
