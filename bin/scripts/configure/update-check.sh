@@ -19,8 +19,8 @@ if [ "$CURRENT_VERSION" = "$LATEST_VERSION" ]; then
 else
   echo "⭐️ An update is available! "
   echo "---------------------------"
-  echo -e " Current\t$CURRENT_VERSION"
-  echo -e " Latest \t$LATEST_VERSION"
+  echo "✔️  Current\t$CURRENT_VERSION"
+  echo "✨  Latest \t$LATEST_VERSION"
   echo "---------------------------"
   echo " Download $LATEST_VERSION here: $DOWNLOAD_URL"
 fi
