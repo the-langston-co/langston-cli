@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
+
+# This script downloads & installs the cli. If the cli is already installed, it will update it to the latest version.
+# This is also the source of the script in Kandji to install langston-cli automatically
+
 CLI_DIR="$HOME/langston-cli"
 DOWNLOAD_DIR="$CLI_DIR/downloads"
 mkdir -p "${DOWNLOAD_DIR}"

@@ -24,10 +24,10 @@ echo -n "$VERSION" > resources/VERSION.txt
 git add resources/VERSION.txt
 git commit -m"'Update version to $VERSION'"
 
-if git tag "$VERSION" ; then
+if git tag "$VERSION" &> /dev/null ; then
   echo "Successfully created Git tag $VERSION"
 else
-  exit 1
+  echo "Tag ${VERSION} already exists!"
 fi
 
 # Bundle the contents as a tarball, excluding files & folders listed in `.archiveignore`
