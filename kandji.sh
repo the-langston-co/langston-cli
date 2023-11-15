@@ -20,7 +20,7 @@ echo "Temporary directory created: $temp_dir"
 script_url="https://raw.githubusercontent.com/the-langston-co/langston-cli/main/bin/scripts/configure/download.sh"
 
 # Download the script
-echo "Downloading the script..."
+echo "Downloading the install script from GitHub: ${script_url}"
 curl -s -o "$temp_dir/download.sh" "$script_url"
 if [ ! -f "$temp_dir/download.sh" ]; then
     echo "Failed to download the script. Exiting."
@@ -35,7 +35,7 @@ if [ ! -x "$temp_dir/download.sh" ]; then
     exit 1
 fi
 # Execute the script as the current user
-echo "Executing the script as $current_user..."
+echo "Executing the script as $current_user: ${temp_dir}/download.sh"
 su -l $current_user -c "bash $temp_dir/download.sh"
 
 # Clean up: Optionally delete the temporary directory
