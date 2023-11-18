@@ -4,7 +4,11 @@
 # Updated 2023-11-18 by Neil Poulin
 # This script runs via Kandji to install the langston CLI
 ###############################################################
-
+KANDJI_VERSION='v1.0.1'
+echo "*********************************************"
+echo "* LANGSTON KANDJI INSTALL: $KANDJI_VERSION  *"
+echo "*********************************************"
+echo
 echo "whoami: $(whoami)"
 
 # Determine the current user
