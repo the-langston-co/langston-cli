@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############################################################
-# Updated 2023-11-14 by Neil Poulin
+# Updated 2023-11-18 by Neil Poulin
 # This script runs via Kandji to install the langston CLI
 ###############################################################
 
