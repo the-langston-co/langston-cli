@@ -8,7 +8,12 @@ ADMIN_PORT=9051
 echo
 echo "Starting auth proxy for env \"${ENV}\""
 
-SERVICE_ACCOUNT_FILE="$HOME/langston-cli/db-service-account-$ENV.json"
+SERVICE_ACCOUNT_FILE="$HOME/langston-cli/auth/db-service-account-$ENV.json"
+
+if [[ ! -f "$SERVICE_ACCOUNT_FILE" ]]; then
+  echo "  no service account found in the langston-cli/auth directory, checking old location at the langston-cli root directory..."
+  SERVICE_ACCOUNT_FILE="$HOME/langston-cli/db-service-account-$ENV.json"
+fi
 
 if [[ ! -f "$SERVICE_ACCOUNT_FILE" ]]; then
   echo "🛑  No service account file found for $ENV ($SERVICE_ACCOUNT_FILE). You may need to run \"langston auth $ENV\" to configure the necessary credentials."

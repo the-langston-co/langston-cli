@@ -23,7 +23,7 @@ echo
 echo "Requesting service account data from $HOST"
 
 OUT_DIR="$HOME/langston-cli"
-OUT_FILE="$OUT_DIR/db-service-account-$ENV.json"
+OUT_FILE="$OUT_DIR/auth/db-service-account-$ENV.json"
 
 
 http_response=$(curl --location "$HOST/db-service-account" --header 'Content-Type: application/json' --data "{\"password\": \"$PASSWORD\"}" -o $OUT_FILE -w "%{http_code}" -s)
