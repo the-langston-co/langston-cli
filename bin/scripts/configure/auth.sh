@@ -18,15 +18,14 @@ elif [[ $ENV == 'prod' ]]; then
   HOST="https://api.thelangstonco.com"
 fi
 
-
-echo
 echo "Requesting service account data from $HOST"
 
-OUT_DIR="$HOME/langston-cli"
-OUT_FILE="$OUT_DIR/auth/db-service-account-$ENV.json"
+OUT_DIR="$HOME/langston-cli/auth"
+OUT_FILE="$OUT_DIR/db-service-account-$ENV.json"
+# Create output directory if it doesn't exist
+mkdir -p "${OUT_DIR}"
 
-
-http_response=$(curl --location "$HOST/db-service-account" --header 'Content-Type: application/json' --data "{\"password\": \"$PASSWORD\"}" -o $OUT_FILE -w "%{http_code}" -s)
+http_response=$(curl --location "$HOST/db-service-account" --header 'Content-Type: application/json' --data "{\"password\": \"$PASSWORD\"}" -o "$OUT_FILE" -w "%{http_code}" -s)
 
 echo
 
