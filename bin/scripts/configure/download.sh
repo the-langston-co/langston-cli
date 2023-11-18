@@ -15,23 +15,30 @@ BREW_PATH=$(which brew)
 if [ -x "$BREW_PATH" ] ; then
   echo "✅  Homebrew is already installed"
 else
-  echo "installing homebrew"
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-  echo "✅  Homebrew installed successfully"
+  echo "'brew' was not found via 'which brew'...installing homebrew"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  if [ -x "$BREW_PATH" ] ; then
+    echo "✅  Homebrew installed successfully"
+  else
+    echo "❌  Failed to install homebrew"
+    exit 1
+  fi
 fi
 
 PATH_TO_JQ=$(which jq)
 if [ -x "$PATH_TO_JQ" ] ; then
-  echo "✅  jq installed"
+  echo "✅  jq already installed"
 else
   echo "installing JQ..."
 #  echo "Please enter the password to your computer to perform the installation"
   brew install jq
-  echo
-  echo "✅  jq installed"
+  PATH_TO_JQ=$(which jq)
+  if [ -x "$PATH_TO_JQ" ] ; then
+    echo "✅  jq installed successfully"
+  fi
 fi
 
-
+PATH_TO_JQ=$(which jq)
 if ! [ -x "$PATH_TO_JQ" ] ; then
   echo "❌  jq is not installed, can not continue."
   exit 1
@@ -44,11 +51,12 @@ else
   echo "installing wget..."
 #  echo "Please enter the password to your computer to perform the installation"
   brew install wget
+  PATH_TO_WGET=$(which wget)
   echo
   echo "✅  wget installed"
 fi
 
-
+PATH_TO_WGET=$(which wget)
 if ! [ -x "$PATH_TO_WGET" ] ; then
   echo "❌  wget is not installed, can not continue."
   exit 1
