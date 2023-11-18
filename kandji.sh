@@ -26,10 +26,14 @@ if [ ! -f "$temp_dir/download.sh" ]; then
     echo "Failed to download the script. Exiting."
     exit 1
 fi
-echo "Script downloaded successfully."
+echo "✅  Script downloaded successfully."
+
+# Make sure the current user owns the directory and all files
+chown -R "$current_user" "$temp_dir"
 
 # Make the script executable
 chmod +x "$temp_dir/download.sh"
+
 if [ ! -x "$temp_dir/download.sh" ]; then
     echo "Failed to set execute permission on the script. Exiting."
     exit 1
