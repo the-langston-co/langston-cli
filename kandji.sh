@@ -44,3 +44,7 @@ su -l $current_user -c "bash $temp_dir/download.sh"
 
 # Clean up: delete the temporary directory
 rm -r "$temp_dir"
+
+echo
+echo "Installed langston-cli version $(langston -v)"
+echo
