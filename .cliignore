@@ -11,3 +11,4 @@ package.json
 package.*.json
 bundle.sh
 kandji.sh
+release.sh
