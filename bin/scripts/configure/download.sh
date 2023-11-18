@@ -11,52 +11,60 @@ cd "${DOWNLOAD_DIR}" || exit
 
 #First, ensure homebrew is installed
 
-BREW_PATH=$(which brew)
+BREW_PATH=$(command -v brew)
 if [ -x "$BREW_PATH" ] ; then
-  echo "✅  Homebrew is already installed"
+  echo "✅  $(brew -v) is already installed"
 else
-  echo "'brew' was not found via 'which brew'...installing homebrew"
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  echo "'brew' was not found... installing homebrew"
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  BREW_PATH=$(command -v brew)
   if [ -x "$BREW_PATH" ] ; then
-    echo "✅  Homebrew installed successfully"
+    echo "✅  $(brew -v) installed successfully"
   else
     echo "❌  Failed to install homebrew"
     exit 1
   fi
 fi
 
-PATH_TO_JQ=$(which jq)
+if [[ $(command -v brew) == "" ]]; then
+  echo "❌  Home brew is not installed, can not continue"
+  exit 1
+else
+  echo "Home brew is installed"
+fi
+
+PATH_TO_JQ=$(command -v jq)
 if [ -x "$PATH_TO_JQ" ] ; then
-  echo "✅  jq already installed"
+  echo "✅  jq already installed ($(jq --version))"
 else
   echo "installing JQ..."
 #  echo "Please enter the password to your computer to perform the installation"
   brew install jq
-  PATH_TO_JQ=$(which jq)
+  PATH_TO_JQ=$(command -v jq)
   if [ -x "$PATH_TO_JQ" ] ; then
-    echo "✅  jq installed successfully"
+    echo "✅  jq installed successfully ($(jq --version))"
   fi
 fi
 
-PATH_TO_JQ=$(which jq)
+PATH_TO_JQ=$(command -v jq)
 if ! [ -x "$PATH_TO_JQ" ] ; then
   echo "❌  jq is not installed, can not continue."
   exit 1
 fi
 
-PATH_TO_WGET=$(which wget)
+PATH_TO_WGET=$(command -v wget)
 if [ -x "$PATH_TO_WGET" ] ; then
   echo "✅  wget installed"
 else
   echo "installing wget..."
 #  echo "Please enter the password to your computer to perform the installation"
   brew install wget
-  PATH_TO_WGET=$(which wget)
+  PATH_TO_WGET=$(command -v wget)
   echo
   echo "✅  wget installed"
 fi
 
-PATH_TO_WGET=$(which wget)
+PATH_TO_WGET=$(command -v wget)
 if ! [ -x "$PATH_TO_WGET" ] ; then
   echo "❌  wget is not installed, can not continue."
   exit 1

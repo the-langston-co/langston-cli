@@ -4,7 +4,7 @@
 # Updated 2023-11-18 by Neil Poulin
 # This script runs via Kandji to install the langston CLI
 ###############################################################
-KANDJI_VERSION='v1.0.1'
+KANDJI_VERSION='v1.0.2'
 echo "*********************************************"
 echo "* LANGSTON KANDJI INSTALL: $KANDJI_VERSION  *"
 echo "*********************************************"
@@ -41,23 +41,6 @@ chmod +x "$temp_dir/download.sh"
 if [ ! -x "$temp_dir/download.sh" ]; then
     echo "Failed to set execute permission on the script. Exiting."
     exit 1
-fi
-
-# Do homebrew install check here
-
-BREW_PATH=$(su -l "$current_user" -c 'which brew')
-if [ -x "$BREW_PATH" ] ; then
-  echo "✅  [Kandji] Homebrew is already installed"
-else
-  echo "⏳  [Kandji] Installing homebrew..."
-  echo
-  su -l "$current_user" -c '/bin/bash "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-  if [ -x "$BREW_PATH" ] ; then
-    echo "✅  [Kandji] Homebrew installed successfully"
-  else
-    echo "❌  [Kandji] Failed to install homebrew"
-    exit 1
-  fi
 fi
 
 # Execute the script as the current user
