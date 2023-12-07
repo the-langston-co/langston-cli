@@ -8,10 +8,10 @@ DOWNLOAD_DIR="$CLI_DIR/downloads"
 mkdir -p "${DOWNLOAD_DIR}"
 cd "${DOWNLOAD_DIR}" || exit
 
-echo "*********************************************"
-echo "   [$(date +"%Y-%m-%d_%H-%M-%S")] LANGSTON DOWNLOAD SCRIPT STARTING          "
-echo "   Running as user $(whoami)"
-echo "*********************************************"
+echo "*********************************************************************"
+echo " [$(date +"%Y-%m-%d_%H-%M-%S")] LANGSTON DOWNLOAD SCRIPT STARTING          "
+echo " Running as user $(whoami)"
+echo "*********************************************************************"
 echo
 
 
@@ -20,6 +20,7 @@ echo
 BREW_PATH=$(command -v brew)
 
 echo "Current brew path is ${BREW_PATH}"
+command -v brew
 
 if [ -x "$BREW_PATH" ] ; then
   echo "✅  $(brew -v) is already installed"
