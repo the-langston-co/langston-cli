@@ -33,11 +33,6 @@ else
     exit 1
   fi
 fi
-BREW_PATH="$(/usr/bin/find /usr/local/bin /opt -maxdepth 3 -name brew 2>/dev/null)"
-if [ -x "$BREW_PATH" ] ; then
-  echo "❌  Home brew is not installed, can not continue"
-  exit 1
-fi
 
 PATH_TO_JQ=$(command -v jq)
 if [ -x "$PATH_TO_JQ" ] ; then
