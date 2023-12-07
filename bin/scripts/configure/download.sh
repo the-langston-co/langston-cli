@@ -8,6 +8,11 @@ DOWNLOAD_DIR="$CLI_DIR/downloads"
 mkdir -p "${DOWNLOAD_DIR}"
 cd "${DOWNLOAD_DIR}" || exit
 
+echo "*********************************************"
+echo "* LANGSTON DOWNLOAD SCRIPT STARTING         *"
+echo "*********************************************"
+echo
+echo "Running as: whoami=$(whoami)"
 
 #First, ensure homebrew is installed
 
@@ -16,7 +21,7 @@ if [ -x "$BREW_PATH" ] ; then
   echo "✅  $(brew -v) is already installed"
 else
   echo "'brew' was not found... installing homebrew"
-  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  NONINTERACTIVE=1 /bin/zsh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   BREW_PATH=$(command -v brew)
   if [ -x "$BREW_PATH" ] ; then
     echo "✅  $(brew -v) installed successfully"
