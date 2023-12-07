@@ -9,14 +9,18 @@ mkdir -p "${DOWNLOAD_DIR}"
 cd "${DOWNLOAD_DIR}" || exit
 
 echo "*********************************************"
-echo "* LANGSTON DOWNLOAD SCRIPT STARTING         *"
+echo "   [$(date +"%Y-%m-%d_%H-%M-%S")] LANGSTON DOWNLOAD SCRIPT STARTING          "
+echo "   Running as user $(whoami)"
 echo "*********************************************"
 echo
-echo "Running as: whoami=$(whoami)"
+
 
 #First, ensure homebrew is installed
 
 BREW_PATH=$(command -v brew)
+
+echo "Current brew path is ${BREW_PATH}"
+
 if [ -x "$BREW_PATH" ] ; then
   echo "✅  $(brew -v) is already installed"
 else
