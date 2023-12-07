@@ -37,7 +37,7 @@ script_url="https://raw.githubusercontent.com/the-langston-co/langston-cli/main/
 
 # Download the script
 echo "Downloading the install script from GitHub: ${script_url}" | tee -a "$log_file_path"
-curl -s -o "$temp_dir/download.sh" "$script_url" | tee -a "$log_file_path"
+curl -s -o "$temp_dir/download.sh" -H 'Cache-Control: no-cache, no-store' "$script_url" | tee -a "$log_file_path"
 if [ ! -f "$temp_dir/download.sh" ]; then
     echo "Failed to download the script. Exiting." | tee -a "$log_file_path"
     exit 1
@@ -57,7 +57,7 @@ fi
 
 # Execute the script as the current user
 echo "Executing the script as $current_user: ${temp_dir}/download.sh" | tee -a "$log_file_path"
-su -l "$current_user" -c "$temp_dir/download.sh" | tee -a "$log_file_path"
+su -p -l "$current_user" -c "$temp_dir/download.sh" | tee -a "$log_file_path"
 
 # Clean up: delete the temporary directory
 #rm -r "$temp_dir"
