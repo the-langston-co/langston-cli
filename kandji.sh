@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/bin/zsh
 
 ###############################################################
 # Updated 2023-11-18 by Neil Poulin
 # This script runs via Kandji to install the langston CLI
 ###############################################################
-KANDJI_VERSION='v1.0.2'
+KANDJI_VERSION='v1.0.3'
 echo "*********************************************"
 echo "* LANGSTON KANDJI INSTALL: $KANDJI_VERSION  *"
 echo "*********************************************"
@@ -45,10 +45,10 @@ fi
 
 # Execute the script as the current user
 echo "Executing the script as $current_user: ${temp_dir}/download.sh"
-su -l "$current_user" -c "bash $temp_dir/download.sh"
+su -l "$current_user" -c "$temp_dir/download.sh"
 
 # Clean up: delete the temporary directory
-rm -r "$temp_dir"
+#rm -r "$temp_dir"
 
 echo
 echo "[Kandji] Installed langston-cli version $(langston -v)"
