@@ -31,19 +31,12 @@ echo "current_user=$current_user" | tee -a "$log_file_path"
 echo "Temporary directory created: $temp_dir" | tee -a "$log_file_path"
 echo "Log file created at $log_file_path" | tee -a "$log_file_path"
 
-
-# URL of the script to download
-script_url="https://raw.githubusercontent.com/the-langston-co/langston-cli/main/bin/scripts/configure/download.sh"
 echo "removing any existing file download" | tee -a "$log_file_path"
 rm -f "$temp_dir/download.sh" | tee -a "$log_file_path"
-# Download the script
-echo "Downloading the install script from GitHub: ${script_url}" | tee -a "$log_file_path"
-curl -s -o "$temp_dir/download.sh" -H 'Cache-Control: no-cache, no-store' "$script_url" | tee -a "$log_file_path"
-if [ ! -f "$temp_dir/download.sh" ]; then
-    echo "Failed to download the script. Exiting." | tee -a "$log_file_path"
-    exit 1
-fi
-echo "✅  Script downloaded successfully." | tee -a "$log_file_path"
+echo "Using local script file"
+cp ./bin/scripts/configure/download.sh "$temp_dir/download.sh" | tee -a "$log_file_path"
+
+echo "✅  Copied file to output dir successfully" | tee -a "$log_file_path"
 
 # Make sure the current user owns the directory and all files
 chown -R "$current_user" "$temp_dir" | tee -a "$log_file_path"
@@ -58,7 +51,7 @@ fi
 
 # Execute the script as the current user
 echo "Executing the script as $current_user: ${temp_dir}/download.sh" | tee -a "$log_file_path"
-su -l "$current_user" -p -c "$temp_dir/download.sh" | tee -a "$log_file_path"
+su -l "$current_user" -c "$temp_dir/download.sh" | tee -a "$log_file_path"
 
 # Clean up: delete the temporary directory
 #rm -r "$temp_dir"

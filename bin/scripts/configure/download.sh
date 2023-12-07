@@ -1,5 +1,5 @@
 #!/bin/zsh
-
+# This is the local version
 # This script downloads & installs the cli. If the cli is already installed, it will update it to the latest version.
 # This is also the source of the script in Kandji to install langston-cli automatically
 
@@ -16,7 +16,9 @@ echo
 
 
 #First, ensure homebrew is installed
-
+echo "PATH=$PATH"
+echo
+echo
 BREW_PATH="$(/usr/bin/find /usr/local/bin /opt -maxdepth 3 -name brew 2>/dev/null)"
 echo "Current brew path is ${BREW_PATH}"
 
