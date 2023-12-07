@@ -17,15 +17,11 @@ echo
 
 #First, ensure homebrew is installed
 
-BREW_PATH=$(command -v brew)
-kandji_brew_path="$(/usr/bin/find /usr/local/bin /opt -maxdepth 3 -name brew 2>/dev/null)"
-echo "Kandji brew path ${kandji_brew_path}"
+BREW_PATH="$(/usr/bin/find /usr/local/bin /opt -maxdepth 3 -name brew 2>/dev/null)"
 echo "Current brew path is ${BREW_PATH}"
-echo "Which brew: $(which brew)"
-command -v brew
 
-if [ -x "$BREW_PATH" ] | [ -x "$kandji_brew_path" ] ; then
-  echo "✅  $(brew -v) is already installed"
+if [ -x "$BREW_PATH" ] ; then
+  echo "✅  Homebrew is already installed"
 else
   echo "'brew' was not found... installing homebrew"
   NONINTERACTIVE=1 /bin/zsh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -37,12 +33,10 @@ else
     exit 1
   fi
 fi
-
-if [[ $(command -v brew) == "" ]]; then
+BREW_PATH="$(/usr/bin/find /usr/local/bin /opt -maxdepth 3 -name brew 2>/dev/null)"
+if [ -x "$BREW_PATH" ] ; then
   echo "❌  Home brew is not installed, can not continue"
   exit 1
-else
-  echo "Home brew is installed"
 fi
 
 PATH_TO_JQ=$(command -v jq)
