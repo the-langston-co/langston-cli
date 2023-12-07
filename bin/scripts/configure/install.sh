@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
-
-INSTALL_DIR="$HOME/langston-cli"
+current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ && ! /root/ && ! /_mbsetupuser/ { print $3 }' | /usr/bin/awk -F '@' '{print $1}')
+INSTALL_DIR="/Users/$current_user/langston-cli"
 LANGSTON_BIN="$INSTALL_DIR/bin"
 CURRENT_DIR=$(dirname $0)
 CLI_ROOT="$CURRENT_DIR/../../.."

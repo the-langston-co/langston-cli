@@ -50,9 +50,10 @@ if [ ! -x "$temp_dir/download.sh" ]; then
 fi
 
 # Execute the script as the current user
-echo "Executing the script as $current_user: ${temp_dir}/download.sh" | tee -a "$log_file_path"
-su -l "$current_user" -c "$temp_dir/download.sh" | tee -a "$log_file_path"
-
+#echo "Executing the script as $current_user: ${temp_dir}/download.sh" | tee -a "$log_file_path"
+#su -l "$current_user" -c "$temp_dir/download.sh" | tee -a "$log_file_path"
+echo "Executing the script as ROOT ${temp_dir}/download.sh" | tee -a "$log_file_path"
+"$temp_dir/download.sh" | tee -a "$log_file_path"
 # Clean up: delete the temporary directory
 #rm -r "$temp_dir"
 

@@ -4,13 +4,13 @@
 # This script downloads & installs the cli. If the cli is already installed, it will update it to the latest version.
 # This is also the source of the script in Kandji to install langston-cli automatically
 
-CLI_DIR="$HOME/langston-cli"
+current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ && ! /root/ && ! /_mbsetupuser/ { print $3 }' | /usr/bin/awk -F '@' '{print $1}')
+CLI_DIR="/Users/$current_user/langston-cli"
 DOWNLOAD_DIR="$CLI_DIR/downloads"
 
 LOG_NAME="cli_download.log"
-LOG_DIR="$HOME/langston-cli-tmp/logs"
+LOG_DIR="/Users/$current_user/langston-cli-tmp/logs"
 LOG_PATH="$LOG_DIR/$LOG_NAME"
-current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ && ! /root/ && ! /_mbsetupuser/ { print $3 }' | /usr/bin/awk -F '@' '{print $1}')
 mkdir -p "${DOWNLOAD_DIR}"
 mkdir -p "$LOG_DIR"
 touch -a LOG_PATH
