@@ -5,23 +5,31 @@
 # This script runs via Kandji to install the langston CLI
 ###############################################################
 KANDJI_VERSION='v1.0.5'
+# Determine the current user
+current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ && ! /root/ && ! /_mbsetupuser/ { print $3 }' | /usr/bin/awk -F '@' '{print $1}')
 
 # Create a temporary directory in the user home directory
 temp_dir="/Users/$current_user/langston-cli-tmp"
 log_file_path="$temp_dir/log.txt"
 mkdir -p "$temp_dir"
 touch -a log_file_path
+
+echo "" | tee -a "$log_file_path"
+echo "" | tee -a "$log_file_path"
+echo "" | tee -a "$log_file_path"
+echo "" | tee -a "$log_file_path"
+
+echo "*********************************************************************" | tee -a "$log_file_path"
+echo "" | tee -a "$log_file_path"
+echo "  [$(date +"%Y-%m-%d_%H-%M-%S")] LANGSTON KANDJI INSTALL: $KANDJI_VERSION  " | tee -a "$log_file_path"
+echo "" | tee -a "$log_file_path"
+echo "*********************************************************************" | tee -a "$log_file_path"
+echo | tee -a "$log_file_path"
+
+echo "whoami: $(whoami)" | tee -a "$log_file_path"
+echo "current_user=$current_user" | tee -a "$log_file_path"
 echo "Temporary directory created: $temp_dir" | tee -a "$log_file_path"
 echo "Log file created at $log_file_path" | tee -a "$log_file_path"
-
-echo "*********************************************" | tee -a "$log_file_path"
-echo "* LANGSTON KANDJI INSTALL: $KANDJI_VERSION  *" | tee -a "$log_file_path"
-echo "*********************************************" | tee -a "$log_file_path"
-echo | tee -a "$log_file_path"
-echo "whoami: $(whoami)" | tee -a "$log_file_path"
-
-# Determine the current user
-current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ && ! /root/ && ! /_mbsetupuser/ { print $3 }' | /usr/bin/awk -F '@' '{print $1}')
 
 
 # URL of the script to download
