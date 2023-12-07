@@ -13,7 +13,7 @@ LOG_DIR="/Users/$current_user/langston-cli-tmp/logs"
 LOG_PATH="$LOG_DIR/$LOG_NAME"
 mkdir -p "${DOWNLOAD_DIR}"
 mkdir -p "$LOG_DIR"
-touch -a LOG_PATH
+touch -a $LOG_PATH
 cd "${DOWNLOAD_DIR}" || exit
 
 echo "*********************************************************************"
