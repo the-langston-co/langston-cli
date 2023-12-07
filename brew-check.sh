@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 BREW_CMD=$(command -v brew)
 echo "BREW_CMD=${BREW_CMD}"
 if [[ $(command -v brew) == "" ]]; then

@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 INSTALL_DIR="$HOME/langston-cli"
 LANGSTON_BIN="$INSTALL_DIR/bin"

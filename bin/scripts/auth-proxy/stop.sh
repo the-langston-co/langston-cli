@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 ENV=${1:='prod'}
 
 echo "Attempting to stop auth-proxy for ${ENV}"

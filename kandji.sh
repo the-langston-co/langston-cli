@@ -1,10 +1,10 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 ###############################################################
 # Updated 2023-11-18 by Neil Poulin
 # This script runs via Kandji to install the langston CLI
 ###############################################################
-KANDJI_VERSION='v1.0.7'
+KANDJI_VERSION='v1.0.8'
 # Determine the current user
 current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ && ! /root/ && ! /_mbsetupuser/ { print $3 }' | /usr/bin/awk -F '@' '{print $1}')
 
@@ -58,7 +58,7 @@ fi
 
 # Execute the script as the current user
 echo "Executing the script as $current_user: ${temp_dir}/download.sh" | tee -a "$log_file_path"
-su -l "$current_user" -p -c "$temp_dir/download.sh" | tee -a "$log_file_path"
+su -l "$current_user" -c "$temp_dir/download.sh" | tee -a "$log_file_path"
 
 # Clean up: delete the temporary directory
 #rm -r "$temp_dir"

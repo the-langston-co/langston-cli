@@ -399,7 +399,7 @@ update_path() {
     # Check for missing PATH
     get_path_cmd=$(/usr/bin/su - "$current_user" -c "$brew_prefix/bin/brew doctor 2>&1 | /usr/bin/grep 'export PATH=' | /usr/bin/tail -1")
 
-    # Checking to see if the output returned from get_path_cmd contains the word homebrew and
+    #update_pa Checking to see if the output returned from get_path_cmd contains the word homebrew and
     # also checking to see if brew is actually in the current user's path by runing the which
     # command.
     if echo "$get_path_cmd" | grep "homebrew" >/dev/null 2>&1 && ! /usr/bin/which brew >/dev/null 2>&1; then
@@ -544,7 +544,7 @@ logging "info" "Running brew cleanup ..."
 
 # updated the user's PATH var to add brew binary location
 logging "info" "Checking to see if brew is in current user's PATH..."
-update_path
+th
 
 logging "info" "Running brew doctor to validate the install ..."
 brew_doctor "$brew_prefix" "$current_user"

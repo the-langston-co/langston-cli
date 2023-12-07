@@ -1,11 +1,19 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
+
 # This is the local version
 # This script downloads & installs the cli. If the cli is already installed, it will update it to the latest version.
 # This is also the source of the script in Kandji to install langston-cli automatically
 
 CLI_DIR="$HOME/langston-cli"
 DOWNLOAD_DIR="$CLI_DIR/downloads"
+
+LOG_NAME="cli_download.log"
+LOG_DIR="$HOME/langston-cli-tmp/logs"
+LOG_PATH="$LOG_DIR/$LOG_NAME"
+current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ && ! /root/ && ! /_mbsetupuser/ { print $3 }' | /usr/bin/awk -F '@' '{print $1}')
 mkdir -p "${DOWNLOAD_DIR}"
+mkdir -p "$LOG_DIR"
+touch -a LOG_PATH
 cd "${DOWNLOAD_DIR}" || exit
 
 echo "*********************************************************************"
@@ -14,13 +22,128 @@ echo " Running as user $(whoami)"
 echo "*********************************************************************"
 echo
 
+logging() {
+    # Logging function
+    #
+    # Takes in a log level and log string and logs to /Library/Logs/$script_name if a
+    # LOG_PATH constant variable is not found. Will set the log level to INFO if the
+    # first built-in $1 is passed as an empty string.
+    #
+    # Args:
+    #   $1: Log level. Examples "info", "warning", "debug", "error"
+    #   $2: Log statement in string format
+    #
+    # Examples:
+    #   logging "" "Your info log statement here ..."
+    #   logging "warning" "Your warning log statement here ..."
+    log_level=$(printf "%s" "$1" | /usr/bin/tr '[:lower:]' '[:upper:]')
+    log_statement="$2"
+    script_name="$(/usr/bin/basename "$0")"
+    prefix=$(/bin/date +"[%b %d, %Y %Z %T $log_level]:")
+
+    # see if a LOG_PATH has been set
+    if [[ -z "${LOG_PATH}" ]]; then
+        LOG_PATH="/Library/Logs/${script_name}"
+    fi
+
+    if [[ -z $log_level ]]; then
+        # If the first builtin is an empty string set it to log level INFO
+        log_level="INFO"
+    fi
+
+    if [[ -z $log_statement ]]; then
+        # The statement was piped to the log function from another command.
+        log_statement=""
+    fi
+
+    # echo the same log statement to stdout
+    /bin/echo "$prefix $log_statement"
+
+    # send log statement to log file
+    printf "%s %s\n" "$prefix" "$log_statement" >>"$LOG_PATH"
+
+}
+
+set_brew_prefix() {
+    # Set the homebrew prefix.
+    # Set the brew prefix to either the Apple Silicon location or the Intel location based on the
+    # processor_brand information
+    #
+    # $1: proccessor brand information
+    local brew_prefix
+
+    if [[ $1 == *"Apple"* ]]; then
+        # set brew prefix for apple silicon
+        brew_prefix="/opt/homebrew"
+    else
+        # set brew prefix for Intel
+        brew_prefix="/usr/local"
+    fi
+
+    # return the brew_prefix
+    /bin/echo "$brew_prefix"
+}
+
+
+check_brew_install_status() {
+    # Check brew install status.
+    brew_path="$(/usr/bin/find /usr/local/bin /opt -maxdepth 3 -name brew 2>/dev/null)"
+
+    if [[ -n $brew_path ]]; then
+        # If the brew binary is found, just run brew update and exit
+        logging "info" "Homebrew already installed at $brew_path..."
+    else
+        logging "info" "Homebrew is not installed..."
+    fi
+}
+
+
+update_path() {
+    # Add brew to current user PATH
+    # Check for missing PATH
+    get_path_cmd="$brew_prefix/bin/brew doctor 2>&1 | /usr/bin/grep 'export PATH=' | /usr/bin/tail -1"
+
+    #update_pa Checking to see if the output returned from get_path_cmd contains the word homebrew and
+    # also checking to see if brew is actually in the current user's path by runing the which
+    # command.
+    if echo "$get_path_cmd" | grep "homebrew" >/dev/null 2>&1 && ! /usr/bin/which brew >/dev/null 2>&1; then
+
+        # get the shell dot rc file returned from the get_path_cmd command so that we know
+        # which shell the current user is using.
+        shell_rc_file=$(echo "$get_path_cmd" | awk '{print $5}' | awk -F '/' '{print $2}')
+
+        # Check the user's shell rc file to see if homebrew has already been added to the
+        # user's PATH. If we find it in there already then there is no reason to write to that
+        # file again.
+        if ! /usr/bin/grep "$brew_prefix/bin" "/Users/$current_user/$shell_rc_file" >/dev/null 2>&1; then
+            echo "Adding brew to user's PATH..."
+            echo "Using command: $get_path_cmd"
+            "${get_path_cmd}"
+
+        else
+            echo "brew path $brew_prefix/bin already in user's $shell_rc_file..."
+        fi
+
+    else
+        logging "info" "brew already in user's PATH..."
+    fi
+}
+
 
 #First, ensure homebrew is installed
 echo "PATH=$PATH"
 echo
 echo
 BREW_PATH="$(/usr/bin/find /usr/local/bin /opt -maxdepth 3 -name brew 2>/dev/null)"
+processor_brand="$(/usr/sbin/sysctl -n machdep.cpu.brand_string)"
+check_brew_install_status
+brew_prefix=$(set_brew_prefix "$processor_brand")
+
+
 echo "Current brew path is ${BREW_PATH}"
+echo "Brew prefix is $brew_prefix"
+
+update_path
 
 if [ -x "$BREW_PATH" ] ; then
   echo "✅  Homebrew is already installed"

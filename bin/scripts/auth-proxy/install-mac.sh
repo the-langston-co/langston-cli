@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 echo
 
 # Set the working directory to be the user's home directory
