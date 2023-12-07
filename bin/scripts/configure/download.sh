@@ -18,12 +18,13 @@ echo
 #First, ensure homebrew is installed
 
 BREW_PATH=$(command -v brew)
-
+kandji_brew_path="$(/usr/bin/find /usr/local/bin /opt -maxdepth 3 -name brew 2>/dev/null)"
+echo "Kandji brew path ${kandji_brew_path}"
 echo "Current brew path is ${BREW_PATH}"
 echo "Which brew: $(which brew)"
 command -v brew
 
-if [ -x "$BREW_PATH" ] ; then
+if [ -x "$BREW_PATH" ] | [ -x "$kandji_brew_path" ] ; then
   echo "✅  $(brew -v) is already installed"
 else
   echo "'brew' was not found... installing homebrew"
