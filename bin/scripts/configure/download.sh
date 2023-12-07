@@ -20,6 +20,7 @@ echo
 BREW_PATH=$(command -v brew)
 
 echo "Current brew path is ${BREW_PATH}"
+echo "Which brew: $(which brew)"
 command -v brew
 
 if [ -x "$BREW_PATH" ] ; then
