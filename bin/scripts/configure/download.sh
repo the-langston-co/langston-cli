@@ -135,19 +135,22 @@ update_path() {
 
 
 #First, ensure homebrew is installed
-echo "PATH=$PATH"
+echo "original PATH=$PATH"
 echo
 echo
 BREW_PATH="$(/usr/bin/find /usr/local/bin /opt -maxdepth 3 -name brew 2>/dev/null)"
 processor_brand="$(/usr/sbin/sysctl -n machdep.cpu.brand_string)"
 check_brew_install_status
 brew_prefix=$(set_brew_prefix "$processor_brand")
-export PATH="$brew_prefix/bin:$CLI_DIR/bin:$PATH"
 
 echo "Current brew path is ${BREW_PATH}"
 echo "Brew prefix is $brew_prefix"
 
 update_path
+
+export PATH="$brew_prefix/bin:$CLI_DIR/bin:$PATH"
+
+echo "updated PATH=$PATH"
 
 if [ -x "$BREW_PATH" ] ; then
   echo "✅  Homebrew is already installed"
