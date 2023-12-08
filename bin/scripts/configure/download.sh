@@ -103,15 +103,18 @@ update_path() {
     # Check for missing PATH
     get_path_cmd="$brew_prefix/bin/brew doctor 2>&1 | /usr/bin/grep 'export PATH=' | /usr/bin/tail -1"
 
+
+    # get the shell dot rc file returned from the get_path_cmd command so that we know
+    # which shell the current user is using.
+    shell_rc_file=$(echo "$get_path_cmd" | awk '{print $5}' | awk -F '/' '{print $2}')
+    logging "info" "user Shell RC file: ${shell_rc_file}"
+
     #update_pa Checking to see if the output returned from get_path_cmd contains the word homebrew and
     # also checking to see if brew is actually in the current user's path by runing the which
     # command.
     if echo "$get_path_cmd" | grep "homebrew" >/dev/null 2>&1 && ! /usr/bin/which brew >/dev/null 2>&1; then
 
-        # get the shell dot rc file returned from the get_path_cmd command so that we know
-        # which shell the current user is using.
-        shell_rc_file=$(echo "$get_path_cmd" | awk '{print $5}' | awk -F '/' '{print $2}')
-        logging "info" "user Shell RC file: ${shell_rc_file}"
+
         # Check the user's shell rc file to see if homebrew has already been added to the
         # user's PATH. If we find it in there already then there is no reason to write to that
         # file again.
