@@ -10,7 +10,7 @@ current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/aw
 
 # Create a temporary directory in the user home directory
 temp_dir="/Users/$current_user/langston-cli-tmp"
-log_file_path="$temp_dir/log.txt"
+log_file_path="$temp_dir/log.1xt"
 mkdir -p "$temp_dir"
 touch -a log_file_path
 

@@ -142,7 +142,7 @@ BREW_PATH="$(/usr/bin/find /usr/local/bin /opt -maxdepth 3 -name brew 2>/dev/nul
 processor_brand="$(/usr/sbin/sysctl -n machdep.cpu.brand_string)"
 check_brew_install_status
 brew_prefix=$(set_brew_prefix "$processor_brand")
-
+export PATH="$brew_prefix/bin:$PATH"
 
 echo "Current brew path is ${BREW_PATH}"
 echo "Brew prefix is $brew_prefix"
