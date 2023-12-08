@@ -224,4 +224,7 @@ fi
 echo "Extracting files to ${CLI_DIR}..."
 tar -xzvf "${DOWNLOAD_FILENAME}" -C ..
 
+
+/bin/zsh "$CLI_DIR/bin/langston" install
+
 echo "🎉  Langston CLI setup finished."
