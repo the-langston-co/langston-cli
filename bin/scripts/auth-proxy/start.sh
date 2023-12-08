@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/zsh
 
 ENV=${1:='prod'}
 DB_PORT=3307

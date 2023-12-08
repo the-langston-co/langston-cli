@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/zsh
 
 CURRENT_DIR=$(dirname $0)
 RESOURCES_DIR="$CURRENT_DIR"/../../../resources

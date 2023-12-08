@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/zsh
 ENV=${1:='prod'}
 
 HTTP_PORT=9090

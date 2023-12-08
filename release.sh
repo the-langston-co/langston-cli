@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/zsh
 
 VERSION=$(cat resources/VERSION.txt | tr -d " \t\n\r")
 PROPOSED_VERSION=$1

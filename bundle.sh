@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/zsh
 # Empty contents of the dist folder
 rm -rf dist
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/zsh
 
 # This is the local version
 # This script downloads & installs the cli. If the cli is already installed, it will update it to the latest version.
@@ -106,7 +106,8 @@ update_path() {
 
     # get the shell dot rc file returned from the get_path_cmd command so that we know
     # which shell the current user is using.
-    shell_rc_file=$(echo "$get_path_cmd" | awk '{print $5}' | awk -F '/' '{print $2}')
+#    shell_rc_file=$(echo "$get_path_cmd" | awk '{print $5}' | awk -F '/' '{print $2}')
+    shell_rc_file=".zshrc"
     logging "info" "user Shell RC file: ${shell_rc_file}"
 
     #update_pa Checking to see if the output returned from get_path_cmd contains the word homebrew and

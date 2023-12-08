@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/zsh
 
 ################################################################################################
 # Created by Nicholas McDonald | support@kandji.io | Kandji, Inc.
