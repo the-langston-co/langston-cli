@@ -111,7 +111,7 @@ update_path() {
         # get the shell dot rc file returned from the get_path_cmd command so that we know
         # which shell the current user is using.
         shell_rc_file=$(echo "$get_path_cmd" | awk '{print $5}' | awk -F '/' '{print $2}')
-
+        logging "info" "user Shell RC file: ${shell_rc_file}"
         # Check the user's shell rc file to see if homebrew has already been added to the
         # user's PATH. If we find it in there already then there is no reason to write to that
         # file again.
