@@ -8,6 +8,7 @@ CLI_ROOT="$CURRENT_DIR/../../.."
 
 echo
 echo "Installing Langston CLI"
+echo "Current shell is $SHELL ($0)"
 echo
 echo "Copying files..."
 echo
@@ -50,43 +51,44 @@ else
   echo "Your path does not include \"$LANGSTON_BIN\" yet"
 fi
 
-if [[ $SHELL == '/bin/zsh' ]]; then
-  touch -a ~/.zshrc
-  if grep -q "LANGSTON-CLI" ~/.zshrc; then
-    echo "Path already exported from ~/.zshrc."
-    echo
-    echo "contents of ~/.zshrc:"
-    echo
-    cat ~/.zshrc
-  else
-    echo "Adding Langston CLI to .zshrc"
-    echo -e '\n#FROM LANGSTON-CLI' >> ~/.zshrc
-    echo -e "export PATH=${LANGSTON_BIN}:\$PATH" >> ~/.zshrc
-
-    echo
-    echo "Updated contents of ~/.zshrc:"
-    echo
-    cat ~/.zshrc
-  fi
-elif [[ $SHELL == '/bin/bash' ]]; then
-   touch -a ~/.bash_profile
-   if grep -q "LANGSTON-CLI" ~/.bash_profile; then
-      echo "Path already exported"
-  else
-    echo "Adding Langston CLI to .bash_profile"
-    echo -e '\n#FROM LANGSTON-CLI' >> ~/.bash_profile
-    echo -e "export PATH=${LANGSTON_BIN}:\$PATH" >> ~/.bash_profile
-  fi
+#if [[ $SHELL == '/bin/zsh' ]]; then
+touch -a ~/.zshrc
+if grep -q "LANGSTON-CLI" ~/.zshrc; then
+  echo "Path already exported from ~/.zshrc."
+  echo
+  echo "contents of ~/.zshrc:"
+  echo
+  cat ~/.zshrc
 else
-  echo "Using unknown shell"
+  echo "Adding Langston CLI to .zshrc"
+  echo -e '\n#FROM LANGSTON-CLI' >> ~/.zshrc
+  echo -e "export PATH=${LANGSTON_BIN}:\$PATH" >> ~/.zshrc
+
+  echo
+  echo "Updated contents of ~/.zshrc:"
+  echo
+  cat ~/.zshrc
 fi
+#elif [[ $SHELL == '/bin/bash' ]]; then
+ touch -a ~/.bash_profile
+ if grep -q "LANGSTON-CLI" ~/.bash_profile; then
+    echo "Path already exported"
+else
+  echo "Adding Langston CLI to .bash_profile"
+  echo -e '\n#FROM LANGSTON-CLI' >> ~/.bash_profile
+  echo -e "export PATH=${LANGSTON_BIN}:\$PATH" >> ~/.bash_profile
+fi
+#else
+#  echo "Using unknown shell"
+#fi
 
 # Add new bin to current path
 PATH="${LANGSTON_BIN}:\$PATH"
 
 PATH_TO_EXECUTABLE=$(which langston)
 if [ -x "$PATH_TO_EXECUTABLE" ] ; then
-  echo "✅  langston successfully is installed to: $PATH_TO_EXECUTABLE"
+  echo "✅  langston (version=$(langston -v) successfully is installed to: $PATH_TO_EXECUTABLE"
+  echo "You may need to open a new terminal window to have access to the CLI tools."
   exit
 else
   echo
