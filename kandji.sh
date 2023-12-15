@@ -4,13 +4,13 @@
 # Updated 2023-11-18 by Neil Poulin
 # This script runs via Kandji to install the langston CLI
 ###############################################################
-KANDJI_VERSION='v1.1.1'
+KANDJI_VERSION='v2.0.0'
 # Determine the current user
 current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ && ! /root/ && ! /_mbsetupuser/ { print $3 }' | /usr/bin/awk -F '@' '{print $1}')
 
 # Create a temporary directory in the user home directory
 temp_dir="/Users/$current_user/langston-cli-tmp"
-log_file_path="$temp_dir/log.1xt"
+log_file_path="$temp_dir/log.txt"
 mkdir -p "$temp_dir"
 touch -a log_file_path
 
@@ -65,7 +65,8 @@ su -l "$current_user" -c "/bin/zsh $temp_dir/download.sh" | tee -a "$log_file_pa
 
 # Clean up: delete the temporary directory
 #rm -r "$temp_dir"
-
+CLI_DIR="/Users/$current_user/langston-cli"
+export PATH="$CLI_DIR/bin:$PATH"
 echo | tee -a "$log_file_path"
 echo "[Kandji] Installed langston-cli version $(langston -v)" | tee -a "$log_file_path"
 echo | tee -a "$log_file_path"
