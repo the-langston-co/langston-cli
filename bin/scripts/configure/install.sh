@@ -2,6 +2,7 @@
 current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ && ! /root/ && ! /_mbsetupuser/ { print $3 }' | /usr/bin/awk -F '@' '{print $1}')
 INSTALL_DIR="/Users/$current_user/langston-cli"
 LANGSTON_BIN="$INSTALL_DIR/bin"
+PATH_TO_EXECUTABLE="$LANGSTON_BIN/langston"
 CURRENT_DIR=$(dirname $0)
 CLI_ROOT="$CURRENT_DIR/../../.."
 
@@ -37,25 +38,35 @@ else
 fi
 
 
-PATH_TO_EXECUTABLE=$(which langston)
-if [ -x "$PATH_TO_EXECUTABLE" ] ; then
-  echo "✅  langston-cli is installed here: $PATH_TO_EXECUTABLE"
-  exit
-fi
+#PATH_TO_EXECUTABLE=$(which langston)
+#if [ -x "$PATH_TO_EXECUTABLE" ] ; then
+#  echo "✅  langston-cli is installed here: $PATH_TO_EXECUTABLE"
+#  exit
+#fi
 
 if [[ ":$PATH:" == *":$LANGSTON_BIN:"* ]]; then
   echo "✅  Your path correctly includes \"$LANGSTON_BIN\""
-  exit
+else
+  echo "Your path does not include \"$LANGSTON_BIN\" yet"
 fi
 
 if [[ $SHELL == '/bin/zsh' ]]; then
   touch -a ~/.zshrc
   if grep -q "LANGSTON-CLI" ~/.zshrc; then
-    echo "Path already exported"
+    echo "Path already exported from ~/.zshrc."
+    echo
+    echo "contents of ~/.zshrc:"
+    echo
+    cat ~/.zshrc
   else
     echo "Adding Langston CLI to .zshrc"
     echo -e '\n#FROM LANGSTON-CLI' >> ~/.zshrc
     echo -e "export PATH=${LANGSTON_BIN}:\$PATH" >> ~/.zshrc
+
+    echo
+    echo "Updated contents of ~/.zshrc:"
+    echo
+    cat ~/.zshrc
   fi
 elif [[ $SHELL == '/bin/bash' ]]; then
    touch -a ~/.bash_profile
