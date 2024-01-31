@@ -114,8 +114,6 @@ update_path() {
     # also checking to see if brew is actually in the current user's path by runing the which
     # command.
     if echo "$get_path_cmd" | grep "homebrew" >/dev/null 2>&1 && ! /usr/bin/which brew >/dev/null 2>&1; then
-
-
         # Check the user's shell rc file to see if homebrew has already been added to the
         # user's PATH. If we find it in there already then there is no reason to write to that
         # file again.
