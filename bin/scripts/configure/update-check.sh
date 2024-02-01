@@ -10,7 +10,6 @@ RELEASES=$(curl -s --location 'https://api.github.com/repos/the-langston-co/lang
 LATEST_VERSION=$(jq -r ".[0].tag_name" <<< "$RELEASES")
 CURRENT_VERSION=$(cat "$RESOURCES_DIR/VERSION.txt")
 
-
 DOWNLOAD_URL=$(jq -r ".[0].assets[0].browser_download_url" <<< "$RELEASES")
 
 if [ "$CURRENT_VERSION" = "$LATEST_VERSION" ]; then
@@ -25,10 +24,8 @@ else
   echo " Download $LATEST_VERSION here: $DOWNLOAD_URL"
 fi
 
-
-read -p "Install the new version now (Y/n)? " -n 1 -r
-echo    # (optional) move to a new line
-if [[ ! $REPLY =~ ^[Yy]$ ]]
+read answer"?Install the new version now (Y/n)? "
+if [[ ! $answer =~ ^[Yy]$ ]]
 then
     echo Not installing
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
