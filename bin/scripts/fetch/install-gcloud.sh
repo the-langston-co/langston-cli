@@ -34,3 +34,5 @@ tar -xzf "$HOME/Downloads/${GCLOUD_FILENAME}" -C "$GCLOUD_DIR"
 cd "${GCLOUD_DIR}" || exit
 ./google-cloud-sdk/install.sh --install-python false --path-update true --command-completion true --bash-completion true --usage-reporting true --quiet
 
+#Reload .zshrc file to get new configs added by google cloud
+. "$HOME/.zshrc"
