@@ -36,3 +36,4 @@ cd "${GCLOUD_DIR}" || exit
 
 #Reload .zshrc file to get new configs added by google cloud
 . "$HOME/.zshrc"
+echo "Google Cloud CLI has been installed with version $(gcloud --version)"

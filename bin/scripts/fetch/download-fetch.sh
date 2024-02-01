@@ -4,6 +4,8 @@ cd "$parent_path" || exit 1
 echo "Fetch current dir: $(dirname $0)"
 echo "Fetch parent_path: ${parent_path}"
 "$parent_path/scripts/fetch/install-gcloud.sh" || exit 1
+# Reload the shell config just in case
+. "$HOME/.zshrc"
 "$parent_path/scripts/fetch/auth-gcloud.sh" || exit 1
 
 echo "Finding latest version of Fetch in Google Cloud Storage"
