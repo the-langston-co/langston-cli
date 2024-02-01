@@ -15,6 +15,8 @@ Available commands:
         start <ENV> - start the production connection. ENV defaults to "prod"
         start-stage - start the stage connection. This is an alias for "db start stage"
         stop <ENV> - stop the Auth Proxy service. ENV defaults to "prod"
+    fetch - commands related to Fetch App
+        install - Downloads and installs the latest version of fetch. Can be used for a fresh installation or upgrading to a new version. Aliases for this command: update, download
     help - prints this list of commands
     install - installs the command line tools
     update - checks for available updates with option to upgrade to latest
