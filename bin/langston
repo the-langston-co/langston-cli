@@ -87,6 +87,7 @@ On_IPurple='\033[0;105m'  # Purple
 On_ICyan='\033[0;106m'    # Cyan
 On_IWhite='\033[0;107m'   # White
 
+VERSION="$(cat $HOME/langston-cli/resources/VERSION.txt)"
 
 if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
   cd scripts/auth-proxy
@@ -132,10 +133,11 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
   fi
 elif [[ $COMMAND == 'setup' || $COMMAND == 'install' ]]; then
   "$CURRENT_DIR"/scripts/configure/install.sh
-  echo
+  echo "${Green}"
   echo "*******************************************"
-  echo "🎉 Langston CLI Installed successfully! 🎉"
+  echo "🎉 Langston CLI ${VERSION} Installed successfully! 🎉"
   echo "*******************************************"
+  echo "${Color_Off}"
   echo
   cat "$RESOURCES_DIR/COMMANDS.txt"
 elif [[ $COMMAND == 'update' ]]; then

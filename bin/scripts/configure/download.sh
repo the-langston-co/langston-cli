@@ -233,3 +233,4 @@ VERSION="$(cat $HOME/langston-cli/resources/VERSION.txt)"
 echo
 echo
 echo "🎉  ${Green}Langston CLI setup finished for version ${VERSION}${Color_Off}"
+echo
