@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+#Reload .zshrc file to get new configs added by google cloud
+. "$HOME/.zshrc"
+
 # Latest versions of GCLOUD can be found [here](https://cloud.google.com/sdk/docs/downloads-versioned-archives).
 GCLOUD_FILENAME=google-cloud-cli-462.0.0-darwin-arm.tar.gz
 
