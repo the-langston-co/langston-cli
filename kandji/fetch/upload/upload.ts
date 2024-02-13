@@ -1,5 +1,4 @@
 import FormData from "form-data"
-import {fileFromPath} from "formdata-node/file-from-path"
 import axios from 'axios';
 import * as fs from "fs";
 import path from "path";
