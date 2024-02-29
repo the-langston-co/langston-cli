@@ -1,25 +1,42 @@
 import {upload} from "./upload";
-import * as path from "path";
 import {existsSync} from "fs";
 import dotenv from 'dotenv';
+import {promptConfirm, promptForArtifactPath, promptForBeta} from "./prompts";
 
 dotenv.config();
 
 async function start() {
-    const filepath = path.resolve('../dist/Fetch.dmg');
+    const {version, artifactPath} = await promptForArtifactPath()
+    const {beta} = await promptForBeta();
 
-    const fileExists = existsSync(filepath);
-    if (!fileExists) {
-        throw new Error(`File not found for ${filepath}`)
-    } else {
-        console.log(`Uploading new version to Kandji from file ${filepath}`)
+    const settings = [{version, artifactPath, beta}]
+    console.log()
+    console.log('Kandji release settings')
+
+    console.table(settings, )
+    console.log()
+    const confirm = await promptConfirm('Proceed with the release using these settings?')
+
+    if (!confirm) {
+        console.log();
+
+        console.log('Not proceeding with upload to Kandji.')
+        return;
     }
-    await upload(filepath)
+
+    const fileExists = existsSync(artifactPath);
+    if (!fileExists) {
+        throw new Error(`File not found for ${artifactPath}`)
+    } else {
+        console.log(`Uploading new version to Kandji from file ${artifactPath}`)
+    }
+    await upload(artifactPath, {beta,})
+    console.log('Fetch App loaded to Kandji')
     return;
 }
 
 start().then(() => {
-    console.log('Fetch App loaded to Kandji')
+    console.log('Done')
 }).catch(error => {
     console.error('Upload errored')
     console.error(error);

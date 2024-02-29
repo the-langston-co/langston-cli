@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "upload": "vite-node index.ts",
-    "list": "vite-node list.ts"
+    "list": "vite-node list.ts",
+    "updateFileKey": "vite-node updateFileKey.ts"
   },
   "author": "Neil Poulin",
   "license": "ISC",
