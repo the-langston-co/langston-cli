@@ -6,6 +6,8 @@ if [[ $ENV == 'stage' ]]; then
   HTTP_PORT=9090
 elif [[ $ENV == 'prod' ]]; then
     HTTP_PORT=9050
+elif [[ $ENV == 'prod-replica' ]]; then
+    HTTP_PORT=9060
 fi
 
 # Check if already running

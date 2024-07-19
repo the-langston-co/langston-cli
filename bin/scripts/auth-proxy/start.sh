@@ -9,20 +9,10 @@ echo
 echo "Starting auth proxy for env \"${ENV}\""
 
 SERVICE_ACCOUNT_FILE="$HOME/langston-cli/auth/db-service-account-$ENV.json"
-
-if [[ ! -f "$SERVICE_ACCOUNT_FILE" ]]; then
-  echo "  no service account found in the langston-cli/auth directory, checking old location at the langston-cli root directory..."
-  SERVICE_ACCOUNT_FILE="$HOME/langston-cli/db-service-account-$ENV.json"
-fi
-
-if [[ ! -f "$SERVICE_ACCOUNT_FILE" ]]; then
-  echo "🛑  No service account file found for $ENV ($SERVICE_ACCOUNT_FILE). You may need to run \"langston auth $ENV\" to configure the necessary credentials."
-  exit 1
-fi
-
 INSTANCE_NAME=prod-instance
+
 if [[ $ENV == 'stage' ]]; then
-  INSTANCE_NAME=langston-stage:us-central1:langston-db-dev
+  INSTANCE_NAME=langston-stage 8:us-central1:langston-db-dev
   DB_PORT=3306
   HTTP_PORT=9090
   ADMIN_PORT=9091
@@ -41,6 +31,18 @@ elif [[ $ENV == 'prod' ]]; then
   ADMIN_PORT=9051
   NICKNAME='prod'
 fi
+
+# Check to ensure credential file exists
+if [[ ! -f "$SERVICE_ACCOUNT_FILE" ]]; then
+  echo "  no service account found in the langston-cli/auth directory, checking old location at the langston-cli root directory..."
+  SERVICE_ACCOUNT_FILE="$HOME/langston-cli/db-service-account-$ENV.json"
+fi
+
+if [[ ! -f "$SERVICE_ACCOUNT_FILE" ]]; then
+  echo "🛑  No service account file found for $ENV ($SERVICE_ACCOUNT_FILE). You may need to run \"langston auth $ENV\" to configure the necessary credentials."
+  exit 1
+fi
+
 
 echo "Starting instanceName $INSTANCE_NAME on port $DB_PORT"
 echo "   Admin Port: ${ADMIN_PORT}"

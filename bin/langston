@@ -119,6 +119,8 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
         ./check.sh stage
         echo
         ./check.sh prod
+        echo
+        ./check.sh prod-replica
       else
         ./check.sh "$3"
       fi
