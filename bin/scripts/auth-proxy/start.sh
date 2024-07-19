@@ -12,20 +12,20 @@ SERVICE_ACCOUNT_FILE="$HOME/langston-cli/auth/db-service-account-$ENV.json"
 INSTANCE_NAME=prod-instance
 
 if [[ $ENV == 'stage' ]]; then
-  INSTANCE_NAME=langston-stage 8:us-central1:langston-db-dev
+  INSTANCE_NAME='langston-stage:us-central1:langston-db-dev'
   DB_PORT=3306
   HTTP_PORT=9090
   ADMIN_PORT=9091
   NICKNAME=stage
 elif [[ $ENV == 'prod-replica' || $ENV == 'replica' || $ENV == 'analyst' ]]; then
   SERVICE_ACCOUNT_FILE="$HOME/langston-cli/auth/db-service-account-prod.json"
-  INSTANCE_NAME=langston-prod:us-central1:langston-prod-replica
+  INSTANCE_NAME='langston-prod:us-central1:langston-prod-replica'
   DB_PORT=3308
   HTTP_PORT=9060
   ADMIN_PORT=9061
   NICKNAME='prod (read-replica)'
 elif [[ $ENV == 'prod' ]]; then
-  INSTANCE_NAME=langston-prod:us-central1:langston-prod
+  INSTANCE_NAME='langston-prod:us-central1:langston-prod'
   DB_PORT=3307
   HTTP_PORT=9050
   ADMIN_PORT=9051

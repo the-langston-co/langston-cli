@@ -6,9 +6,15 @@ RESOURCES_DIR="$CURRENT_DIR/../resources"
 
 cd "$CURRENT_DIR"
 #echo "pwd: $(pwd)"
-#echo "CURRENT_DIR: $CURRENT_DIR"
-#echo "scripts: $SCRIPTS_DIR"
+#echo "CURRENT_DIR: ${CURRENT_DIR}"
+#echo "SCRIPTS_DIR: ${SCRIPTS_DIR}"
+#echo "RESOURCES_DIR: ${RESOURCES_DIR}"
 #echo
+
+print_banner() {
+  echo "$(cd "$RESOURCES_DIR" ; cat banner.txt)"
+}
+
 
 COMMAND=$1
 PROGRAM=$2
@@ -92,11 +98,11 @@ VERSION="$(cat $HOME/langston-cli/resources/VERSION.txt)"
 if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
   cd scripts/auth-proxy
   if [[ $PROGRAM == 'install' ]]; then
-    cat "$RESOURCES_DIR/banner.txt"
+    print_banner
     echo
     ./install.sh
   elif [[ $PROGRAM == 'start' ]]; then
-    cat "$RESOURCES_DIR/banner.txt"
+    print_banner
     echo
     if ! command -v cloud-sql-proxy &> /dev/null
     then
@@ -105,15 +111,15 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
     fi
     ./start.sh "$3"
   elif [[ $PROGRAM == 'start-stage' ]]; then
-    cat "$RESOURCES_DIR/banner.txt"
+    print_banner
     echo
     ./start.sh stage
   elif [[ $PROGRAM == 'stop' ]]; then
-      cat "$RESOURCES_DIR/banner.txt"
+      print_banner
       echo
       ./stop.sh "$3"
   elif [[ $PROGRAM == 'check' || $PROGRAM == 'status' ]]; then
-      cat "$RESOURCES_DIR/banner.txt"
+      print_banner
       echo
       if [[ $3 == 'all' ]]; then
         ./check.sh stage
@@ -125,7 +131,7 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
         ./check.sh "$3"
       fi
   elif [[ $PROGRAM == 'help' ]]; then
-    cat "$RESOURCES_DIR/banner.txt"
+    print_banner
     echo
     cat "$SCRIPTS_DIR/auth-proxy/HELP.txt"
   else
@@ -155,11 +161,13 @@ elif [[ $COMMAND == 'fetch' ]]; then
     "$SCRIPTS_DIR/fetch/download-fetch.sh"
   fi
 elif [[ $COMMAND == '' || $COMMAND == 'help' || $COMMAND == '--help' || $COMMAND == '-h' ]]; then
+  print_banner
   cat "$RESOURCES_DIR/COMMANDS.txt"
 elif [[ $COMMAND == 'version' || $COMMAND == 'v' || $COMMAND == '-v' || $COMMAND == '--version' ]]; then
   echo -e "$(cat "$CURRENT_DIR"/../resources/VERSION.txt)"
 
 else
+  print_banner
   echo
   echo -e "${Red}Command \"$COMMAND\" not recognized.${Color_Off}"
   echo

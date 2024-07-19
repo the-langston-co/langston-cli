@@ -8,6 +8,8 @@ if [[ $ENV == 'stage' ]]; then
   PORT=9091
 elif [[ $ENV == 'prod' ]]; then
   PORT=9051
+elif [[ $ENV == 'prod-replica' ]]; then
+  PORT=9061
 fi
 
 ADMIN_URL="http://localhost:$PORT/quitquitquit"
