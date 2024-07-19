@@ -98,10 +98,6 @@ langston db stop <ENV>
 
 The following section is for developers
 
-## Create a new release & upload files
-
-The
-
 ## Release internals tools
 
 To create a new "Release" in GitHub with the bundled CLI code, simply run `./release.sh <NEW_VERSION>` from the root of this project where <NEW_VERSION> is in the format `vX.X.X`. 
