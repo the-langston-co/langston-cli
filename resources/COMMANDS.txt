@@ -13,6 +13,9 @@ Available commands:
         help - show details about the commands that are available
         install - installs Google Auth Proxy
         start <ENV> - start the production connection. ENV defaults to "prod"
+            analyst - (aliases: prod-replica, replica) starts the prod analyst connect. This connects to the prod read-replica db. prod-replica, replica
+            stage - starts the stage db connection
+            prod - (or blank) starts the prod connection. This is the default value if no ENV is provided.
         start-stage - start the stage connection. This is an alias for "db start stage"
         stop <ENV> - stop the Auth Proxy service. ENV defaults to "prod"
     fetch - commands related to Fetch App
@@ -23,4 +26,4 @@ Available commands:
     install - installs the command line tools
     update - checks for available updates with option to upgrade to latest
     download - forces an upgrade to the latest version. Will re-install even if versions match.
-    version - prints the currently installed version of the commandline tools
+    version - (alias: -v, --version) prints the currently installed version of the commandline tools
