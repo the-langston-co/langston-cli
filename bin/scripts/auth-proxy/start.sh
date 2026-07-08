@@ -32,15 +32,24 @@ elif [[ $ENV == 'prod' ]]; then
   NICKNAME='prod'
 fi
 
-# Check to ensure credential file exists
+# Credential resolution: prefer a service-account key file if one is present
+# (managed installs, e.g. Fetch desktop); otherwise fall back to Application
+# Default Credentials. ADC is the preferred path for engineers — you auth as
+# yourself with `gcloud auth application-default login` and there is no
+# downloaded key to distribute or rotate. To switch a machine that has a stale
+# key over to ADC, delete its key file (see the "old location" fallback below).
 if [[ ! -f "$SERVICE_ACCOUNT_FILE" ]]; then
-  echo "  no service account found in the langston-cli/auth directory, checking old location at the langston-cli root directory..."
+  # Legacy location: earlier installs dropped the key at the langston-cli root.
   SERVICE_ACCOUNT_FILE="$HOME/langston-cli/db-service-account-$ENV.json"
 fi
 
-if [[ ! -f "$SERVICE_ACCOUNT_FILE" ]]; then
-  echo "🛑  No service account file found for $ENV ($SERVICE_ACCOUNT_FILE). You may need to run \"langston auth $ENV\" to configure the necessary credentials."
-  exit 1
+CRED_ARGS=()
+if [[ -f "$SERVICE_ACCOUNT_FILE" ]]; then
+  echo "   auth: service account key ($SERVICE_ACCOUNT_FILE)"
+  CRED_ARGS=(--credentials-file "$SERVICE_ACCOUNT_FILE")
+else
+  echo "   auth: Application Default Credentials (no key file found)"
+  echo "         if the proxy fails to authenticate, run: gcloud auth application-default login"
 fi
 
 
@@ -59,9 +68,10 @@ if [ "$LIVENESS_CODE" -eq 200 ]; then
   exit
 fi
 
-# Run cloud sql proxy in background.
-echo "running: cloud-sql-proxy --port $DB_PORT $INSTANCE_NAME --credentials-file $SERVICE_ACCOUNT_FILE --quitquitquit --health-check --http-port $HTTP_PORT --admin-port $ADMIN_PORT &> /dev/null &"
-cloud-sql-proxy --port $DB_PORT "$INSTANCE_NAME" --credentials-file "$SERVICE_ACCOUNT_FILE" --quitquitquit --health-check --http-port "$HTTP_PORT" --admin-port "$ADMIN_PORT" &> /dev/null &
+# Run cloud sql proxy in background. CRED_ARGS is empty when using ADC, which
+# makes cloud-sql-proxy use Application Default Credentials.
+echo "running: cloud-sql-proxy --port $DB_PORT $INSTANCE_NAME ${CRED_ARGS[*]} --quitquitquit --health-check --http-port $HTTP_PORT --admin-port $ADMIN_PORT &> /dev/null &"
+cloud-sql-proxy --port $DB_PORT "$INSTANCE_NAME" "${CRED_ARGS[@]}" --quitquitquit --health-check --http-port "$HTTP_PORT" --admin-port "$ADMIN_PORT" &> /dev/null &
 
 echo
 echo "You can stop it by running \"langston auth-proxy stop\""
