@@ -45,7 +45,10 @@ fi
 # change identity just because a managed key went missing).
 if [[ ! -f "$SERVICE_ACCOUNT_FILE" ]]; then
   # Legacy location: earlier installs dropped the key at the langston-cli root.
-  SERVICE_ACCOUNT_FILE="$HOME/langston-cli/db-service-account-$ENV.json"
+  # Reuse the resolved filename (not raw $ENV) so the read-replica aliases
+  # (`replica`/`analyst`, which map to db-service-account-prod.json) find the
+  # legacy prod key instead of a nonexistent db-service-account-<alias>.json.
+  SERVICE_ACCOUNT_FILE="$HOME/langston-cli/${SERVICE_ACCOUNT_FILE:t}"
 fi
 
 CRED_ARGS=()
