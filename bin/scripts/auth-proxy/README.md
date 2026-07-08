@@ -6,24 +6,33 @@ To install, choose the file that corresponds to your opereating system
 
 ## Authentication
 
-`start.sh` resolves credentials in this order:
+`start.sh` picks a credential this way:
 
-1. **Service-account key file** — if `~/langston-cli/auth/db-service-account-<env>.json`
-   (or the legacy root location) exists, the proxy uses it. This is the managed
-   path (e.g. Fetch desktop installs).
-2. **Application Default Credentials (ADC)** — if no key file is present, the
-   proxy authenticates as *you*, using your `gcloud` ADC. This is the preferred
-   path for engineers: nothing to download, distribute, or rotate.
+1. **`LANGSTON_AUTH_ADC=1`** → Application Default Credentials, ignoring any key
+   file. Use this to switch to ADC without hunting down a stale key, and to use
+   ADC for `prod`/`prod-replica`.
+2. Otherwise, a **service-account key file** if present
+   (`~/langston-cli/auth/db-service-account-<env>.json` or the legacy root
+   location) — the managed path (e.g. Fetch desktop installs), stable non-human
+   identity.
+3. Otherwise, for **stage only**, ADC. For `prod`/`prod-replica` with no key,
+   the proxy refuses to start (so it never silently connects as a human
+   identity) — install the managed key or set `LANGSTON_AUTH_ADC=1`.
+
+After launch the script polls the proxy's `/readiness` endpoint and only reports
+success once the tunnel is actually usable; a stale key or unauthorized ADC
+fails loudly (with a log tail) instead of a false "started".
 
 **Engineer setup (ADC):**
 
 ```
 gcloud auth application-default login   # once, with your Langston Google account
-langston db start stage                 # or: prod-replica, prod
+langston db start stage
 ```
 
-Your Google identity must have `roles/cloudsql.client` on the target project
+Your Google identity needs `roles/cloudsql.client` on the target project
 (engineers get this via the `platform-developers@thelangstonco.com` group).
 
-If a machine has a **stale** key file, delete it to switch to ADC:
-`rm ~/langston-cli/auth/db-service-account-<env>.json`.
+Have a **stale** key file? Either delete it
+(`rm ~/langston-cli/auth/db-service-account-<env>.json`) or run with
+`LANGSTON_AUTH_ADC=1 langston db start <env>`.
