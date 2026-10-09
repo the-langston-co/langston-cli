@@ -1,36 +1,13 @@
 #!/bin/zsh
 
-ENV=${1:='prod'}
-DB_PORT=3307
-HTTP_PORT=9050
-ADMIN_PORT=9051
-NICKNAME=$ENV
+SCRIPT_DIR=$(dirname $0)
+source "$SCRIPT_DIR/env.sh" "${1:-prod}"
+# Held through the check, any replacement, and the launch.
+lock_target
 echo
 echo "Starting auth proxy for env \"${ENV}\""
 
-SERVICE_ACCOUNT_FILE="$HOME/langston-cli/auth/db-service-account-$ENV.json"
-INSTANCE_NAME=prod-instance
-
-if [[ $ENV == 'stage' ]]; then
-  INSTANCE_NAME='langston-stage:us-central1:langston-db-dev'
-  DB_PORT=3306
-  HTTP_PORT=9090
-  ADMIN_PORT=9091
-  NICKNAME=stage
-elif [[ $ENV == 'prod-replica' || $ENV == 'replica' || $ENV == 'analyst' ]]; then
-  SERVICE_ACCOUNT_FILE="$HOME/langston-cli/auth/db-service-account-prod.json"
-  INSTANCE_NAME='langston-prod:us-central1:langston-prod-replica'
-  DB_PORT=3308
-  HTTP_PORT=9060
-  ADMIN_PORT=9061
-  NICKNAME='prod (read-replica)'
-elif [[ $ENV == 'prod' ]]; then
-  INSTANCE_NAME='langston-prod:us-central1:langston-prod'
-  DB_PORT=3307
-  HTTP_PORT=9050
-  ADMIN_PORT=9051
-  NICKNAME='prod'
-fi
+SERVICE_ACCOUNT_FILE="$HOME/langston-cli/auth/db-service-account-$KEY_ENV.json"
 
 # Credential resolution. Two auth methods:
 #   * Service-account key file (managed installs, e.g. Fetch desktop) — the
@@ -76,34 +53,45 @@ echo "   Admin Port: ${ADMIN_PORT}"
 echo "   HTTP Port: ${HTTP_PORT}"
 echo
 
-# Check if already running
-LIVENESS_URL="http://localhost:${HTTP_PORT}/liveness"
-LIVENESS_CODE=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST $LIVENESS_URL)
-
-if [ "$LIVENESS_CODE" -eq 200 ]; then
-  echo "✅  cloud-sql-proxy for '$NICKNAME' is already running"
-  echo "You can stop it by running \"langston auth-proxy stop\""
-  exit
+# Check if already running. A running proxy whose tunnel no longer reaches
+# Cloud SQL is replaced rather than reported as fine.
+# Keyed on the process, not /liveness: a frozen proxy answers neither but
+# still holds the ports.
+if [[ -n "$(proxy_pids)" ]]; then
+  if proxy_probe 5; then
+    echo "✅  cloud-sql-proxy for '$NICKNAME' is already running"
+    echo "You can stop it by running \"langston db stop ${ENV}\""
+    exit
+  fi
+  echo "⚠️  cloud-sql-proxy for '$NICKNAME' is running but not serving connections; replacing it"
+  "$SCRIPT_DIR/stop.sh" "$ENV"
+  echo
 fi
+
+# Installs or upgrades the proxy when it is missing or older than required;
+# a no-op otherwise.
+zsh "$SCRIPT_DIR/install-mac.sh" || exit 1
 
 # Run cloud sql proxy in background. CRED_ARGS is empty when using ADC, which
 # makes cloud-sql-proxy use Application Default Credentials. Output goes to a
 # log (not /dev/null) so failures are diagnosable.
-PROXY_LOG="${TMPDIR:-/tmp}/langston-auth-proxy-${ENV}.log"
-echo "running: cloud-sql-proxy --port $DB_PORT $INSTANCE_NAME ${CRED_ARGS[*]} --quitquitquit --health-check --http-port $HTTP_PORT --admin-port $ADMIN_PORT (log: $PROXY_LOG)"
-cloud-sql-proxy --port $DB_PORT "$INSTANCE_NAME" "${CRED_ARGS[@]}" --quitquitquit --health-check --http-port "$HTTP_PORT" --admin-port "$ADMIN_PORT" &> "$PROXY_LOG" &
+# Keep the previous run's log: it is the evidence of why a proxy went bad.
+[[ -f "$PROXY_LOG" ]] && mv -f "$PROXY_LOG" "$PROXY_LOG.1"
+# --lazy-refresh fetches certificates when a connection needs one instead of on
+# a background timer that stalls while the laptop sleeps.
+PROXY_ARGS=(--port "$DB_PORT" "$INSTANCE_NAME" "${CRED_ARGS[@]}" --lazy-refresh --quitquitquit --health-check --http-port "$HTTP_PORT" --admin-port "$ADMIN_PORT")
+echo "running: $PROXY_BIN ${PROXY_ARGS[*]} (log: $PROXY_LOG)"
+nohup "$PROXY_BIN" "${PROXY_ARGS[@]}" &> "$PROXY_LOG" &
 PROXY_PID=$!
 
-# Verify the proxy actually became ready before reporting success. A
+# Verify the proxy actually serves connections before reporting success. A
 # backgrounded proxy with a stale key or missing/unauthorized ADC still
-# "launches" and then fails every connection — readiness (creds valid +
-# instance reachable) is the real signal.
-READINESS_URL="http://localhost:${HTTP_PORT}/readiness"
+# "launches" and then fails every connection, so require /readiness and a
+# probe through the tunnel.
 READY=""
 for i in {1..15}; do
   kill -0 "$PROXY_PID" 2>/dev/null || break   # proxy process exited
-  CODE=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST "$READINESS_URL")
-  if [ "$CODE" -eq 200 ]; then READY=1; break; fi
+  if [ "$(proxy_http "$HTTP_PORT" readiness)" -eq 200 ] && proxy_probe 5; then READY=1; break; fi
   sleep 1
 done
 
@@ -122,5 +110,5 @@ if [ -z "$READY" ]; then
 fi
 
 echo
-echo "You can stop it by running \"langston auth-proxy stop\""
+echo "You can stop it by running \"langston db stop ${ENV}\""
 echo "✅  cloud-sql-proxy started for '$NICKNAME'"

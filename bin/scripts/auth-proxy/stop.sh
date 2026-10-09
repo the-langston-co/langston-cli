@@ -1,21 +1,25 @@
 #!/bin/zsh
-ENV=${1:='prod'}
+source "$(dirname $0)/env.sh" "${1:-prod}"
+lock_target
 
 echo "Attempting to stop auth-proxy for ${ENV}"
 
-PORT=9051
-if [[ $ENV == 'stage' ]]; then
-  PORT=9091
-elif [[ $ENV == 'prod' ]]; then
-  PORT=9051
-elif [[ $ENV == 'prod-replica' ]]; then
-  PORT=9061
+STATUS_CODE=$(proxy_http "$ADMIN_PORT" quitquitquit)
+echo "  POST to http://localhost:${ADMIN_PORT}/quitquitquit returned status \"${STATUS_CODE}\""
+
+# A wedged proxy may not answer quitquitquit, or may linger after it. Give it a
+# few seconds to exit, then kill it by its health port so the ports free up.
+for i in {1..10}; do
+  [[ -z "$(proxy_pids)" ]] && break
+  sleep 0.5
+done
+PIDS=($(proxy_pids))
+if [[ ${#PIDS} -gt 0 ]]; then
+  echo "  proxy still running (pid ${PIDS[*]}); sending SIGKILL"
+  kill -9 "${PIDS[@]}" 2>/dev/null
+  STATUS_CODE=200
 fi
 
-ADMIN_URL="http://localhost:$PORT/quitquitquit"
-STATUS_CODE=$(curl --silent --output /dev/stderr --write-out "%{http_code}" -X POST $ADMIN_URL)
-
-echo "  POST to ${ADMIN_URL} returned status \"${STATUS_CODE}\""
 echo
 if [ "$STATUS_CODE" -eq 200 ]; then
   echo "✅  cloud-sql-proxy stopped"
