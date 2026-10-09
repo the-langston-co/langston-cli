@@ -2,7 +2,7 @@
 
 VERSION=$(cat resources/VERSION.txt | tr -d " \t\n\r")
 PROPOSED_VERSION=$1
-VERSION_REGEX="^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
+VERSION_REGEX="^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$"
 op plugin inspect gh
 GH_TOKEN=$(op item get qwzdc2tyxqv3sdpkpkx47ckd6e --fields token)
 export GH_TOKEN
