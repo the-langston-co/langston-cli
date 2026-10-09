@@ -33,9 +33,9 @@ certificate refresh. `--lazy-refresh` (v2.26.0, installed automatically by
 
 - `langston db check <env>` probes the tunnel and exits non-zero when it is broken.
 - `langston db restart <env>` stops (SIGKILL if the proxy does not answer) and
-  starts it. Concurrent restarts of one target serialize on a lock, and a
-  caller that waited re-checks before restarting again — so agents can call it
-  freely.
+  starts it. `start`, `stop` and `restart` of one target serialize on a
+  kernel lock (released when its holder exits), and a restart that waited
+  re-checks before restarting again — so agents can call it freely.
 - `start` on a running-but-broken proxy replaces it.
 
 The previous run's log is kept at `$TMPDIR/langston-auth-proxy-<env>.log.1`.

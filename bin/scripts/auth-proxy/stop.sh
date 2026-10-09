@@ -1,5 +1,6 @@
 #!/bin/zsh
 source "$(dirname $0)/env.sh" "${1:-prod}"
+lock_target
 
 echo "Attempting to stop auth-proxy for ${ENV}"
 

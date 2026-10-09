@@ -2,6 +2,8 @@
 
 SCRIPT_DIR=$(dirname $0)
 source "$SCRIPT_DIR/env.sh" "${1:-prod}"
+# Held through the check, any replacement, and the launch.
+lock_target
 echo
 echo "Starting auth proxy for env \"${ENV}\""
 
@@ -53,7 +55,9 @@ echo
 
 # Check if already running. A running proxy whose tunnel no longer reaches
 # Cloud SQL is replaced rather than reported as fine.
-if [ "$(proxy_http "$HTTP_PORT" liveness)" -eq 200 ]; then
+# Keyed on the process, not /liveness: a frozen proxy answers neither but
+# still holds the ports.
+if [[ -n "$(proxy_pids)" ]]; then
   if proxy_probe 5; then
     echo "✅  cloud-sql-proxy for '$NICKNAME' is already running"
     echo "You can stop it by running \"langston db stop ${ENV}\""

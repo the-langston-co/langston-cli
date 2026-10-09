@@ -121,11 +121,13 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
       print_banner
       echo
       if [[ $3 == 'all' ]]; then
-        ./check.sh stage || true
+        CHECK_FAILED=0
+        ./check.sh stage || CHECK_FAILED=1
         echo
-        ./check.sh prod || true
+        ./check.sh prod || CHECK_FAILED=1
         echo
-        ./check.sh prod-replica || true
+        ./check.sh prod-replica || CHECK_FAILED=1
+        exit "$CHECK_FAILED"
       else
         ./check.sh "$3"
       fi

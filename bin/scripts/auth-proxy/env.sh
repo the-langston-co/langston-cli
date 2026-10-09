@@ -3,7 +3,7 @@
 # Source it with the requested env name as $1:
 #   source "$(dirname $0)/env.sh" "$1"
 # Sets ENV (canonical name), INSTANCE_NAME, DB_PORT, HTTP_PORT, ADMIN_PORT,
-# NICKNAME, KEY_ENV, PROXY_BIN, PROXY_LOG and LOCK_DIR.
+# NICKNAME, KEY_ENV, PROXY_BIN, PROXY_LOG and LOCK_FILE.
 
 # The proxy version start.sh requires. install-mac.sh upgrades anything older.
 # v2.26.0 brings --lazy-refresh: certificates are fetched on demand instead of
@@ -47,7 +47,30 @@ case "${1:-prod}" in
 esac
 
 PROXY_LOG="${TMPDIR:-/tmp}/langston-auth-proxy-${ENV}.log"
-LOCK_DIR="${TMPDIR:-/tmp}/langston-auth-proxy-${ENV}.lock"
+LOCK_FILE="${TMPDIR:-/tmp}/langston-auth-proxy-${ENV}.lockfile"
+
+# Take the per-target lock that start, stop and restart share, so concurrent
+# sessions never stop or launch the same proxy at once. It is a kernel lock
+# (fcntl via zsystem flock), released when this process exits however it exits,
+# so there is no stale lock to reclaim. Nested calls (restart -> stop/start)
+# inherit LANGSTON_DB_LOCK_HELD and do not lock again. Sets LOCK_WAITED=1 when
+# another session held the lock first.
+LOCK_WAITED=''
+lock_target() {
+  [[ "$LANGSTON_DB_LOCK_HELD" == "$ENV" ]] && return 0
+  zmodload zsh/system || exit 1
+  touch "$LOCK_FILE"
+  if ! zsystem flock -t 0 -f LOCK_FD "$LOCK_FILE" 2>/dev/null; then
+    LOCK_WAITED=1
+    echo "Waiting for another session's start/stop/restart of ${ENV}..."
+    # Long enough for a restart that downloads a new proxy binary.
+    if ! zsystem flock -t 180 -f LOCK_FD "$LOCK_FILE"; then
+      echo "🛑  Timed out waiting for another session's start/stop/restart of ${ENV}"
+      exit 1
+    fi
+  fi
+  export LANGSTON_DB_LOCK_HELD="$ENV"
+}
 
 # POST to a proxy health/admin endpoint and print the HTTP status code.
 # --max-time matters: a wedged proxy accepts the connection and never answers.
