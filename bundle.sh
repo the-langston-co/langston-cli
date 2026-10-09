@@ -24,6 +24,14 @@ echo -n "$VERSION" > resources/VERSION.txt
 git add resources/VERSION.txt
 git commit -m"'Update version to $VERSION'"
 
+# The tarball is built from HEAD, so HEAD must carry the new version. This
+# also allows re-running when the version commit already exists (nothing to
+# commit) while stopping a release whose commit failed (e.g. a hook).
+if [[ "$(git show HEAD:resources/VERSION.txt | tr -d " \t\n\r")" != "$VERSION" ]]; then
+  echo "❌  HEAD's resources/VERSION.txt is not $VERSION; the version commit failed. Not tagging or bundling."
+  exit 1
+fi
+
 if git tag "$VERSION" &> /dev/null ; then
   echo "Successfully created Git tag $VERSION"
 else
@@ -36,6 +44,9 @@ echo
 # tarball, excluding paths listed in `.archiveignore`. Archiving HEAD rather
 # than the working directory keeps untracked files out of the public release:
 # tarring `.` once shipped an untracked kandji/fetch/upload/.env.
-git archive --format=tar --prefix=./ HEAD | tar -zcf "dist/langston-cli-$VERSION.tar.gz" --exclude-from=".archiveignore" @-
+STAGING=$(mktemp -d)
+trap 'rm -rf "$STAGING"' EXIT
+git archive --format=tar HEAD | tar -x -C "$STAGING" || exit 1
+tar -zcf "dist/langston-cli-$VERSION.tar.gz" --exclude-from=".archiveignore" -C "$STAGING" . || exit 1
 
 echo "Release artifact created at ./dist/langston-cli-$VERSION.tar.gz"
