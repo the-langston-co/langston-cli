@@ -6,7 +6,7 @@ rm -rf dist
 mkdir -p dist
 VERSION=$(cat resources/VERSION.txt | tr -d " \t\n\r")
 PROPOSED_VERSION=$1
-VERSION_REGEX="^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
+VERSION_REGEX="^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$"
 
 if [ -z "$PROPOSED_VERSION" ]; then
   echo "No version provided, using current version of $VERSION"
@@ -32,7 +32,10 @@ fi
 git push origin
 git push origin --tags
 echo
-# Bundle the contents as a tarball, excluding files & folders listed in `.archiveignore`
-tar -zcf "dist/langston-cli-$VERSION.tar.gz" --exclude-from=".archiveignore" .
+# Bundle the committed tree (HEAD, which now carries the version bump) as a
+# tarball, excluding paths listed in `.archiveignore`. Archiving HEAD rather
+# than the working directory keeps untracked files out of the public release:
+# tarring `.` once shipped an untracked kandji/fetch/upload/.env.
+git archive --format=tar --prefix=./ HEAD | tar -zcf "dist/langston-cli-$VERSION.tar.gz" --exclude-from=".archiveignore" @-
 
 echo "Release artifact created at ./dist/langston-cli-$VERSION.tar.gz"
