@@ -6,7 +6,7 @@ Available commands:
         stage - set up for stage environment
         dev - set up for local dev environment
     db <COMMAND> (alias: auth-proxy)
-        check <ENV> - check the status of the Auth Proxy service. ENV defaults to "prod". Pass "all" to print status for all environments.
+        check <ENV> - check the Auth Proxy is running and its tunnel reaches Cloud SQL; exits non-zero when it does not. ENV defaults to "prod". Pass "all" to print status for all environments.
             prod - checks status of the prod db connection
             stage - checks status of the stage db connection
             all - print the status of all environments
@@ -18,6 +18,7 @@ Available commands:
             prod - (or blank) starts the prod connection. This is the default value if no ENV is provided.
         start-stage - start the stage connection. This is an alias for "db start stage"
         stop <ENV> - stop the Auth Proxy service. ENV defaults to "prod"
+        restart <ENV> - stop and start the Auth Proxy. Fixes a proxy that reports healthy but hangs or drops connections. Safe to run from several sessions at once.
     fetch - commands related to Fetch App
         install - Downloads & installs the latest version of fetch. Can be used for a fresh installation or upgrading to a new version. Aliases for this command: update, download
         update - Downloads & installs the latest version of fetch. This is an alias for `install`.

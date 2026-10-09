@@ -104,11 +104,6 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
   elif [[ $PROGRAM == 'start' ]]; then
     print_banner
     echo
-    if ! command -v cloud-sql-proxy &> /dev/null
-    then
-        echo "cloud-sql-proxy has not been installed yet. Installing it now...."
-        ./install.sh
-    fi
     ./start.sh "$3"
   elif [[ $PROGRAM == 'start-stage' ]]; then
     print_banner
@@ -118,15 +113,19 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
       print_banner
       echo
       ./stop.sh "$3"
+  elif [[ $PROGRAM == 'restart' ]]; then
+      print_banner
+      echo
+      ./restart.sh "$3"
   elif [[ $PROGRAM == 'check' || $PROGRAM == 'status' ]]; then
       print_banner
       echo
       if [[ $3 == 'all' ]]; then
-        ./check.sh stage
+        ./check.sh stage || true
         echo
-        ./check.sh prod
+        ./check.sh prod || true
         echo
-        ./check.sh prod-replica
+        ./check.sh prod-replica || true
       else
         ./check.sh "$3"
       fi

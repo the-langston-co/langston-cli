@@ -1,22 +1,13 @@
 #!/bin/zsh
-ENV=${1:='prod'}
+# Exits 0 only when the proxy is running AND a connection through it reaches
+# Cloud SQL. /readiness alone can report 200 while every connection fails
+# (e.g. an expired certificate after sleep), so the tunnel probe decides.
+source "$(dirname $0)/env.sh" "${1:-prod}"
 
-HTTP_PORT=9090
-if [[ $ENV == 'stage' ]]; then
-  HTTP_PORT=9090
-elif [[ $ENV == 'prod' ]]; then
-    HTTP_PORT=9050
-elif [[ $ENV == 'prod-replica' ]]; then
-    HTTP_PORT=9060
-fi
+echo "[${ENV}] Getting db status from http://localhost:${HTTP_PORT}..."
 
-# Check if already running
-BASE_URL="http://localhost:${HTTP_PORT}"
-LIVENESS_CODE=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST $BASE_URL/liveness)
-STARTUP_CODE=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST $BASE_URL/startup)
-READINESS_CODE=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST $BASE_URL/readiness)
-
-echo "[${ENV}] Getting db status from ${BASE_URL}..."
+LIVENESS_CODE=$(proxy_http "$HTTP_PORT" liveness)
+READINESS_CODE=$(proxy_http "$HTTP_PORT" readiness)
 
 if [ "$LIVENESS_CODE" -eq 200 ]; then
   echo "✅  ${ENV} liveness OK"
@@ -30,14 +21,15 @@ else
   echo "🛑 ${ENV} readiness FAILED. Response code: \"${READINESS_CODE}\""
 fi
 
-if [ "$STARTUP_CODE" -eq 200 ]; then
-  echo "✅  ${ENV} startup OK"
-else
-  echo "🛑 ${ENV} startup FAILED. Response code: \"${STARTUP_CODE}\""
+if proxy_probe 5; then
+  echo "✅  ${ENV} tunnel OK (port ${DB_PORT} reaches Cloud SQL)"
+  exit 0
 fi
 
-if [ "$LIVENESS_CODE" -eq 200 ]; then
-  echo "Stop cloud-sql-proxy by running \"langston db stop ${ENV}\""
+echo "🛑 ${ENV} tunnel FAILED: port ${DB_PORT} did not reach Cloud SQL"
+if [[ -n "$(proxy_pids)" ]]; then
+  echo "The proxy is running but not serving connections. Fix it with \"langston db restart ${ENV}\""
 else
   echo "Start cloud-sql-proxy by running \"langston db start ${ENV}\""
 fi
+exit 1
