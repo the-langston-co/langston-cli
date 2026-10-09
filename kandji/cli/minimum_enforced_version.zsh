@@ -18,7 +18,7 @@
 ###############################################################
 autoload is-at-least
 
-MINIMUM_ENFORCED_VERSION="1.10.0"
+MINIMUM_ENFORCED_VERSION="1.10.1"
 
 current_user=$(/usr/sbin/scutil <<<"show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ && ! /root/ && ! /_mbsetupuser/ { print $3 }' | /usr/bin/awk -F '@' '{print $1}')
 if [[ -z $current_user ]]; then
