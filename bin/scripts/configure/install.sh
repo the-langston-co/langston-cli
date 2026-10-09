@@ -83,7 +83,7 @@ fi
 #fi
 
 # Add new bin to current path
-PATH="${LANGSTON_BIN}:\$PATH"
+PATH="${LANGSTON_BIN}:$PATH"
 
 PATH_TO_EXECUTABLE=$(which langston)
 if [ -x "$PATH_TO_EXECUTABLE" ] ; then

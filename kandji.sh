@@ -66,7 +66,16 @@ su -l "$current_user" -c "/bin/zsh $temp_dir/download.sh" | tee -a "$log_file_pa
 # Clean up: delete the temporary directory
 #rm -r "$temp_dir"
 CLI_DIR="/Users/$current_user/langston-cli"
-export PATH="$CLI_DIR/bin:$PATH"
+VERSION_FILE="$CLI_DIR/resources/VERSION.txt"
 echo | tee -a "$log_file_path"
-echo "[Kandji] Installed langston-cli version $(langston -v)" | tee -a "$log_file_path"
+# Read the user's install directly rather than running the CLI as root: CLI
+# releases before this change resolve VERSION.txt against $HOME (/var/root).
+# A failed read is logged, not turned into a non-zero exit: a failed Kandji
+# remediation stops enforcement until the item is flushed, while exit 0 lets
+# the next daily audit retry.
+if INSTALLED_VERSION=$(cat "$VERSION_FILE"); then
+  echo "[Kandji] Installed langston-cli version $INSTALLED_VERSION" | tee -a "$log_file_path"
+else
+  echo "[Kandji] ❌  Install did not complete: could not read $VERSION_FILE" | tee -a "$log_file_path"
+fi
 echo | tee -a "$log_file_path"
