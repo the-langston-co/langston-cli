@@ -68,5 +68,7 @@ su -l "$current_user" -c "/bin/zsh $temp_dir/download.sh" | tee -a "$log_file_pa
 CLI_DIR="/Users/$current_user/langston-cli"
 export PATH="$CLI_DIR/bin:$PATH"
 echo | tee -a "$log_file_path"
-echo "[Kandji] Installed langston-cli version $(langston -v)" | tee -a "$log_file_path"
+# Read the user's install directly: this script runs as root, and the CLI
+# resolves paths against the caller's $HOME (/var/root).
+echo "[Kandji] Installed langston-cli version $(cat "$CLI_DIR/resources/VERSION.txt" 2>/dev/null)" | tee -a "$log_file_path"
 echo | tee -a "$log_file_path"

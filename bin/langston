@@ -1,6 +1,8 @@
 #!/bin/zsh
 set -e
-CURRENT_DIR=$(dirname $0)
+# Absolute path of this script's directory, so RESOURCES_DIR still resolves
+# after the `cd` below and no external `dirname` is needed.
+CURRENT_DIR=${0:A:h}
 SCRIPTS_DIR="$CURRENT_DIR/scripts"
 RESOURCES_DIR="$CURRENT_DIR/../resources"
 
@@ -93,7 +95,7 @@ On_IPurple='\033[0;105m'  # Purple
 On_ICyan='\033[0;106m'    # Cyan
 On_IWhite='\033[0;107m'   # White
 
-VERSION="$(cat $HOME/langston-cli/resources/VERSION.txt)"
+VERSION="$(cat "$RESOURCES_DIR/VERSION.txt")"
 
 if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
   cd scripts/auth-proxy
