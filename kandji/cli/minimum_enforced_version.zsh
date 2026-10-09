@@ -30,8 +30,11 @@ version_file="/Users/$current_user/langston-cli/resources/VERSION.txt"
 installed=$(/bin/cat "$version_file" 2>/dev/null | /usr/bin/tr -d ' \tv\n\r')
 
 if [[ -z $installed ]]; then
-  if [[ -d /Applications/Fetch.app ]]; then
-    echo "Fetch is installed but the langston CLI is missing for $current_user; installing"
+  # Same lookup as kandji/fetch/minimum_enforced_version.zsh, which decides
+  # whether Fetch counts as installed.
+  fetch_path="$(/usr/bin/find /Applications /System/Applications /Library/ -maxdepth 3 -name "Fetch.app" 2>/dev/null | /usr/bin/head -1)"
+  if [[ -n $fetch_path ]]; then
+    echo "Fetch is installed ($fetch_path) but the langston CLI is missing for $current_user; installing"
     exit 1
   fi
   echo "langston CLI not installed for $current_user and Fetch absent; nothing to do"
