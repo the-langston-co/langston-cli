@@ -24,8 +24,10 @@ To install, choose the file that corresponds to your opereating system
 `prod-replica` is started without `--auto-iam-authn`. It serves password
 logins for the database tools, and Fetch never connects to it.
 
-A proxy that is already running without `--auto-iam-authn` is replaced the
-first time `start` runs after you sign in.
+A proxy reads its credentials once, at launch. `start` records which
+credential it launched with, and replaces a running proxy whose credential is
+not the one it would pick now: after you sign in, switch accounts, or when the
+proxy was started by an older CLI.
 
 After launch the script polls `/readiness` and probes the tunnel (a Postgres
 SSLRequest sent through the local port, no credentials needed), and only

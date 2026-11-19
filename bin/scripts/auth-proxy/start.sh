@@ -36,9 +36,11 @@ if google_signed_in; then
   if [[ -n "$GOOGLE_DB_LOGIN" ]]; then
     GOOGLE_LOGIN_ARGS=(--auto-iam-authn)
   fi
+  PROXY_IDENTITY="google:$(credential_fingerprint "$(google_credentials_file)"):${GOOGLE_LOGIN_ARGS[*]}"
 elif [[ "$LANGSTON_AUTH_ADC" != "1" && -f "$SERVICE_ACCOUNT_FILE" ]]; then
   echo "   auth: service account key ($SERVICE_ACCOUNT_FILE)"
   CRED_ARGS=(--credentials-file "$SERVICE_ACCOUNT_FILE")
+  PROXY_IDENTITY="key:$(credential_fingerprint "$SERVICE_ACCOUNT_FILE")"
 else
   echo "🛑  You are not signed in to Google, or the sign-in has expired."
   echo "    Run \"langston login\", then \"langston db start ${ENV}\" again."
@@ -56,10 +58,10 @@ echo
 # Keyed on the process, not /liveness: a frozen proxy answers neither but
 # still holds the ports.
 if [[ -n "$(proxy_pids)" ]]; then
-  if [[ ${#GOOGLE_LOGIN_ARGS} -gt 0 ]] && ! proxy_uses_google_login; then
-    # Started before this machine signed in to Google: it cannot log anyone in
-    # to Postgres as their Google account.
-    echo "⚠️  cloud-sql-proxy for '$NICKNAME' is running without Google database login; replacing it"
+  if ! proxy_has_identity "$PROXY_IDENTITY"; then
+    # Started with a key file, as another account, or before this machine
+    # signed in: it would connect as someone other than the sign-in above.
+    echo "⚠️  cloud-sql-proxy for '$NICKNAME' is running with a different sign-in; replacing it"
   elif proxy_probe 5; then
     echo "✅  cloud-sql-proxy for '$NICKNAME' is already running"
     echo "You can stop it by running \"langston db stop ${ENV}\""
@@ -111,6 +113,8 @@ if [ -z "$READY" ]; then
   fi
   exit 1
 fi
+
+print -r -l -- "$PROXY_PID" "$PROXY_IDENTITY" > "$PROXY_IDENTITY_FILE"
 
 echo
 echo "You can stop it by running \"langston db stop ${ENV}\""

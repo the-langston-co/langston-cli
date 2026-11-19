@@ -3,7 +3,8 @@
 # Source it with the requested env name as $1:
 #   source "$(dirname $0)/env.sh" "$1"
 # Sets ENV (canonical name), INSTANCE_NAME, DB_PORT, HTTP_PORT, ADMIN_PORT,
-# NICKNAME, KEY_ENV, GOOGLE_DB_LOGIN, PROXY_BIN, PROXY_LOG and LOCK_FILE.
+# NICKNAME, KEY_ENV, GOOGLE_DB_LOGIN, PROXY_BIN, PROXY_LOG, LOCK_FILE and
+# PROXY_IDENTITY_FILE.
 #
 # GOOGLE_DB_LOGIN=1 marks the targets Fetch connects to. Their proxy logs in to
 # Postgres as the signed-in Google account. The read replica serves password
@@ -55,6 +56,8 @@ esac
 
 PROXY_LOG="${TMPDIR:-/tmp}/langston-auth-proxy-${ENV}.log"
 LOCK_FILE="${TMPDIR:-/tmp}/langston-auth-proxy-${ENV}.lockfile"
+# Written by start.sh: the proxy's PID, then the credential it was started with.
+PROXY_IDENTITY_FILE="${TMPDIR:-/tmp}/langston-auth-proxy-${ENV}.identity"
 
 # Take the per-target lock that start, stop and restart share, so concurrent
 # sessions never stop or launch the same proxy at once. It is a kernel lock
@@ -107,8 +110,13 @@ proxy_pids() {
   pgrep -f "cloud-sql-proxy .*--http-port ${HTTP_PORT}( |$)"
 }
 
-# Succeeds when the running proxy for this target logs in to Postgres as the
-# signed-in Google account.
-proxy_uses_google_login() {
-  pgrep -f "cloud-sql-proxy .*--auto-iam-authn .*--http-port ${HTTP_PORT}( |$)" >/dev/null
+# Succeeds when the running proxy for this target was started with the
+# credential identity $1. A proxy reads its credentials once, at launch, so one
+# started before a sign-in changed still acts as the previous account. A proxy
+# this file does not describe (started by an older CLI or another tool) does
+# not match.
+proxy_has_identity() {
+  [[ -f "$PROXY_IDENTITY_FILE" ]] || return 1
+  local recorded=("${(@f)$(<"$PROXY_IDENTITY_FILE")}")
+  [[ "${recorded[1]}" == "$(proxy_pids)" && "${recorded[2]}" == "$1" ]]
 }

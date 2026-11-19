@@ -20,7 +20,16 @@ is_work_account() {
   [[ "$1" == *"@$GOOGLE_ACCOUNT_DOMAIN" ]]
 }
 
-if [[ "$1" != '--force' ]] && google_signed_in && is_work_account "$(google_account)"; then
+# gcloud keeps two sign-ins: one for its own commands (the Fetch download) and
+# one for the proxy and Fetch. Both must be the same work account.
+signed_in_as_one_work_account() {
+  google_signed_in || return 1
+  local account
+  account=$(google_credentials_account)
+  is_work_account "$account" && [[ "$account" == "$(google_account)" ]]
+}
+
+if [[ "$1" != '--force' ]] && signed_in_as_one_work_account; then
   echo "✅  Signed in to Google as $(google_account)"
   exit 0
 fi
@@ -36,7 +45,8 @@ if ! gcloud auth login --update-adc; then
   exit 1
 fi
 
-ACCOUNT=$(google_account)
+# `gcloud auth login --update-adc` sets both sign-ins to the chosen account.
+ACCOUNT=$(google_credentials_account)
 if ! is_work_account "$ACCOUNT"; then
   echo
   echo "🛑  You signed in as \"$ACCOUNT\", which is not a @$GOOGLE_ACCOUNT_DOMAIN account."
