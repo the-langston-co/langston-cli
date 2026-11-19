@@ -4,6 +4,10 @@ SCRIPT_DIR=$(dirname $0)
 source "$SCRIPT_DIR/../configure/google-auth.sh"
 parse_db_arguments "$@"
 source "$SCRIPT_DIR/env.sh" "${DB_TARGET:-prod}"
+# Before the lock: other sessions' start, stop and restart of this target wait
+# on it, and must not wait on a browser. The sign-in is checked again below,
+# under the lock.
+renew_google_sign_in || exit 1
 # Held through the check, any replacement, and the launch.
 lock_target
 echo
@@ -30,14 +34,6 @@ fi
 #
 # LANGSTON_AUTH_ADC=1 skips the key file even when the sign-in has expired, so
 # the proxy never falls back to the shared identity for someone who chose their own.
-# A sign-in that is missing or has expired is renewed here when that is
-# allowed (see google_sign_in_allowed). Otherwise a reconnect after Google
-# asks for a fresh sign-in would need a separate `langston login` first.
-if ! google_signed_in && google_sign_in_allowed; then
-  echo "   Your Google sign-in is missing or has expired. Signing in again..."
-  "$SCRIPT_DIR/../configure/auth.sh" || exit 1
-fi
-
 CRED_ARGS=()
 GOOGLE_LOGIN_ARGS=()
 if google_signed_in; then

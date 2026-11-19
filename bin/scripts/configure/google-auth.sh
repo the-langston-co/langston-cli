@@ -32,6 +32,25 @@ google_sign_in_allowed() {
   [[ "$LANGSTON_LOGIN" == "1" ]] || [[ -t 0 && -t 1 ]]
 }
 
+# The folder this file is in, to find auth.sh from whichever script sources it.
+GOOGLE_AUTH_DIR=${${(%):-%x}:A:h}
+
+# Renews a missing or expired Google sign-in when that is allowed. Call it
+# before taking a target's lock and before changing a proxy: the browser step
+# can take as long as the person does, or never finish.
+# Returns 1 only when a sign-in was attempted and the credentials this command
+# uses still do not work, for example when GOOGLE_APPLICATION_CREDENTIALS
+# points at a file the sign-in does not write.
+renew_google_sign_in() {
+  google_signed_in && return 0
+  google_sign_in_allowed || return 0
+  echo "Your Google sign-in is missing or has expired. Signing in again..."
+  "$GOOGLE_AUTH_DIR/auth.sh" || return 1
+  google_signed_in && return 0
+  echo "🛑  Signed in, but the credentials this command uses still do not work: $(google_credentials_file)"
+  return 1
+}
+
 # Reads the arguments of `langston db start|restart`: an optional target and
 # an optional --login, in either order. Sets DB_TARGET and LANGSTON_LOGIN.
 parse_db_arguments() {
