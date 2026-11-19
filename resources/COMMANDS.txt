@@ -10,13 +10,13 @@ Available commands:
             all - print the status of all environments
         help - show details about the commands that are available
         install - installs Google Auth Proxy
-        start <ENV> - start the production connection. ENV defaults to "prod"
+        start <ENV> [--login] - start the production connection. ENV defaults to "prod". From a terminal it signs you in to Google first when your sign-in is missing or has expired; --login does the same when there is no terminal.
             analyst - (aliases: prod-replica, replica) starts the prod analyst connect. This connects to the prod read-replica db. prod-replica, replica
             stage - starts the stage db connection
             prod - (or blank) starts the prod connection. This is the default value if no ENV is provided.
         start-stage - start the stage connection. This is an alias for "db start stage"
         stop <ENV> - stop the Auth Proxy service. ENV defaults to "prod"
-        restart <ENV> - stop and start the Auth Proxy. Fixes a proxy that reports healthy but hangs or drops connections. Safe to run from several sessions at once.
+        restart <ENV> [--login] - stop and start the Auth Proxy, renewing your Google sign-in first like start. Fixes a proxy that reports healthy but hangs or drops connections. Safe to run from several sessions at once.
     fetch - commands related to Fetch App
         install - Downloads & installs the latest version of fetch. Can be used for a fresh installation or upgrading to a new version. Aliases for this command: update, download
         update - Downloads & installs the latest version of fetch. This is an alias for `install`.

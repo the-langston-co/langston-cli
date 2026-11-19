@@ -24,6 +24,28 @@ google_signed_in() {
   gcloud auth application-default print-access-token >/dev/null 2>&1
 }
 
+# Whether a `langston db` command may open the browser to sign in. It may when
+# a person is at a terminal, or when the caller passed --login (Fetch does,
+# because its window has no terminal). Agents and scripts call these commands
+# with nobody present, so the default without a terminal is no.
+google_sign_in_allowed() {
+  [[ "$LANGSTON_LOGIN" == "1" ]] || [[ -t 0 && -t 1 ]]
+}
+
+# Reads the arguments of `langston db start|restart`: an optional target and
+# an optional --login, in either order. Sets DB_TARGET and LANGSTON_LOGIN.
+parse_db_arguments() {
+  DB_TARGET=''
+  local argument
+  for argument in "$@"; do
+    if [[ "$argument" == '--login' ]]; then
+      export LANGSTON_LOGIN=1
+    elif [[ -z "$DB_TARGET" ]]; then
+      DB_TARGET="$argument"
+    fi
+  done
+}
+
 # The account gcloud commands run as (`gcloud storage`), or nothing.
 google_account() {
   gcloud config get-value account 2>/dev/null

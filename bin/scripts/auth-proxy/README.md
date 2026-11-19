@@ -19,6 +19,11 @@ To install, choose the file that corresponds to your opereating system
    machines that have not signed in yet. Nothing installs this file any more.
 3. Otherwise the proxy does not start and tells you to run `langston login`.
 
+Before step 1, `start` and `restart` renew a missing or expired sign-in
+themselves (the browser opens) when a person is at a terminal, or when
+`--login` is passed. Without a terminal and without `--login` they never open
+a browser, because agents and scripts call them with nobody present.
+
 `LANGSTON_AUTH_ADC=1` skips step 2.
 
 `prod-replica` is started without `--auto-iam-authn`. It serves password
