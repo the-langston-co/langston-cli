@@ -1,10 +1,8 @@
 Usage: langston <COMMAND>
 
 Available commands:
-    auth <ENV> - set up your service account. ENV is optional
-        prod - (default) set up for production environment. If no value is provided, this will be used.
-        stage - set up for stage environment
-        dev - set up for local dev environment
+    login - (alias: auth) sign in to Google in your browser. Database and file access use this sign-in. Does nothing when you are already signed in.
+        --force - sign in again, for example to switch accounts
     db <COMMAND> (alias: auth-proxy)
         check <ENV> - check the Auth Proxy is running and its tunnel reaches Cloud SQL; exits non-zero when it does not. ENV defaults to "prod". Pass "all" to print status for all environments.
             prod - checks status of the prod db connection

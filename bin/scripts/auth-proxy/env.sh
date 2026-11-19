@@ -3,7 +3,12 @@
 # Source it with the requested env name as $1:
 #   source "$(dirname $0)/env.sh" "$1"
 # Sets ENV (canonical name), INSTANCE_NAME, DB_PORT, HTTP_PORT, ADMIN_PORT,
-# NICKNAME, KEY_ENV, PROXY_BIN, PROXY_LOG and LOCK_FILE.
+# NICKNAME, KEY_ENV, GOOGLE_DB_LOGIN, PROXY_BIN, PROXY_LOG, LOCK_FILE and
+# PROXY_IDENTITY_FILE.
+#
+# GOOGLE_DB_LOGIN=1 marks the targets Fetch connects to. Their proxy logs in to
+# Postgres as the signed-in Google account. The read replica serves password
+# logins for the database tools only, so its proxy is left as it was.
 
 # The proxy version start.sh requires. install-mac.sh upgrades anything older.
 # v2.26.0 brings --lazy-refresh: certificates are fetched on demand instead of
@@ -21,6 +26,7 @@ case "${1:-prod}" in
     ADMIN_PORT=9091
     NICKNAME='stage'
     KEY_ENV='stage'
+    GOOGLE_DB_LOGIN='1'
     ;;
   prod-replica|replica|analyst)
     ENV='prod-replica'
@@ -30,6 +36,7 @@ case "${1:-prod}" in
     ADMIN_PORT=9061
     NICKNAME='prod (read-replica)'
     KEY_ENV='prod'
+    GOOGLE_DB_LOGIN=''
     ;;
   prod)
     ENV='prod'
@@ -39,6 +46,7 @@ case "${1:-prod}" in
     ADMIN_PORT=9051
     NICKNAME='prod'
     KEY_ENV='prod'
+    GOOGLE_DB_LOGIN='1'
     ;;
   *)
     echo "🛑  Unknown db target \"$1\". Use one of: stage, prod, prod-replica (aliases: replica, analyst)."
@@ -48,6 +56,8 @@ esac
 
 PROXY_LOG="${TMPDIR:-/tmp}/langston-auth-proxy-${ENV}.log"
 LOCK_FILE="${TMPDIR:-/tmp}/langston-auth-proxy-${ENV}.lockfile"
+# Written by start.sh: the proxy's PID, then the credential it was started with.
+PROXY_IDENTITY_FILE="${TMPDIR:-/tmp}/langston-auth-proxy-${ENV}.identity"
 
 # Take the per-target lock that start, stop and restart share, so concurrent
 # sessions never stop or launch the same proxy at once. It is a kernel lock
@@ -98,4 +108,15 @@ proxy_probe() {
 # PIDs of the proxy process serving this target, matched on its health port.
 proxy_pids() {
   pgrep -f "cloud-sql-proxy .*--http-port ${HTTP_PORT}( |$)"
+}
+
+# Succeeds when the running proxy for this target was started with the
+# credential identity $1. A proxy reads its credentials once, at launch, so one
+# started before a sign-in changed still acts as the previous account. A proxy
+# this file does not describe (started by an older CLI or another tool) does
+# not match.
+proxy_has_identity() {
+  [[ -f "$PROXY_IDENTITY_FILE" ]] || return 1
+  local recorded=("${(@f)$(<"$PROXY_IDENTITY_FILE")}")
+  [[ "${recorded[1]}" == "$(proxy_pids)" && "${recorded[2]}" == "$1" ]]
 }

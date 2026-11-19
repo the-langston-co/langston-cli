@@ -43,7 +43,7 @@ _Note: a new directory will be created in the "Home" directory on your computer 
 
 Once the cli is installed, run the following commands to install additional tools & authenticate.
 
-1. `langston auth <ENV>` - where ENV=stage|prod. For most users, you should only need to authenticate with Prod. This command will prompt you for a password which can be found in the Langston 1Password vault, or you can get it from a developer. Note: this password is the one that the Langston API requires in order to return the DB Service Account.
+1. `langston login` - signs you in to Google in your browser. Use your `@thelangstonco.com` account. Your database and file access come from this sign-in; there is no password or key file to install. Run it again when a command says your sign-in has expired.
 2. `langston db install` - installs the necessary dependencies to run `cloud-sql-proxy` to connect to our cloud database(s). 
 3. `langston db start <ENV>` - Starts a new connections
 4. `langston db status all` - Check the status of all of your DB connections
