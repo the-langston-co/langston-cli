@@ -1,8 +1,13 @@
 #!/bin/zsh
 
 SCRIPT_DIR=$(dirname $0)
-source "$SCRIPT_DIR/env.sh" "${1:-prod}"
 source "$SCRIPT_DIR/../configure/google-auth.sh"
+parse_db_arguments "$@"
+source "$SCRIPT_DIR/env.sh" "${DB_TARGET:-prod}"
+# Before the lock: other sessions' start, stop and restart of this target wait
+# on it, and must not wait on a browser. The sign-in is checked again below,
+# under the lock.
+renew_google_sign_in || exit 1
 # Held through the check, any replacement, and the launch.
 lock_target
 echo
@@ -43,7 +48,8 @@ elif [[ "$LANGSTON_AUTH_ADC" != "1" && -f "$SERVICE_ACCOUNT_FILE" ]]; then
   PROXY_IDENTITY="key:$(credential_fingerprint "$SERVICE_ACCOUNT_FILE")"
 else
   echo "🛑  You are not signed in to Google, or the sign-in has expired."
-  echo "    Run \"langston login\", then \"langston db start ${ENV}\" again."
+  echo "    Run \"langston login\", then \"langston db start ${ENV}\" again,"
+  echo "    or run \"langston db start ${ENV} --login\" to do both."
   exit 1
 fi
 

@@ -106,7 +106,7 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
   elif [[ $PROGRAM == 'start' ]]; then
     print_banner
     echo
-    ./start.sh "$3"
+    ./start.sh "${@:3}"
   elif [[ $PROGRAM == 'start-stage' ]]; then
     print_banner
     echo
@@ -118,7 +118,7 @@ if [[ $COMMAND == 'auth-proxy' || $COMMAND == 'db' ]]; then
   elif [[ $PROGRAM == 'restart' ]]; then
       print_banner
       echo
-      ./restart.sh "$3"
+      ./restart.sh "${@:3}"
   elif [[ $PROGRAM == 'check' || $PROGRAM == 'status' ]]; then
       print_banner
       echo
