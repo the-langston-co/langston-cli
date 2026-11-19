@@ -3,7 +3,11 @@
 # Source it with the requested env name as $1:
 #   source "$(dirname $0)/env.sh" "$1"
 # Sets ENV (canonical name), INSTANCE_NAME, DB_PORT, HTTP_PORT, ADMIN_PORT,
-# NICKNAME, KEY_ENV, PROXY_BIN, PROXY_LOG and LOCK_FILE.
+# NICKNAME, KEY_ENV, GOOGLE_DB_LOGIN, PROXY_BIN, PROXY_LOG and LOCK_FILE.
+#
+# GOOGLE_DB_LOGIN=1 marks the targets Fetch connects to. Their proxy logs in to
+# Postgres as the signed-in Google account. The read replica serves password
+# logins for the database tools only, so its proxy is left as it was.
 
 # The proxy version start.sh requires. install-mac.sh upgrades anything older.
 # v2.26.0 brings --lazy-refresh: certificates are fetched on demand instead of
@@ -21,6 +25,7 @@ case "${1:-prod}" in
     ADMIN_PORT=9091
     NICKNAME='stage'
     KEY_ENV='stage'
+    GOOGLE_DB_LOGIN='1'
     ;;
   prod-replica|replica|analyst)
     ENV='prod-replica'
@@ -30,6 +35,7 @@ case "${1:-prod}" in
     ADMIN_PORT=9061
     NICKNAME='prod (read-replica)'
     KEY_ENV='prod'
+    GOOGLE_DB_LOGIN=''
     ;;
   prod)
     ENV='prod'
@@ -39,6 +45,7 @@ case "${1:-prod}" in
     ADMIN_PORT=9051
     NICKNAME='prod'
     KEY_ENV='prod'
+    GOOGLE_DB_LOGIN='1'
     ;;
   *)
     echo "🛑  Unknown db target \"$1\". Use one of: stage, prod, prod-replica (aliases: replica, analyst)."
@@ -98,4 +105,10 @@ proxy_probe() {
 # PIDs of the proxy process serving this target, matched on its health port.
 proxy_pids() {
   pgrep -f "cloud-sql-proxy .*--http-port ${HTTP_PORT}( |$)"
+}
+
+# Succeeds when the running proxy for this target logs in to Postgres as the
+# signed-in Google account.
+proxy_uses_google_login() {
+  pgrep -f "cloud-sql-proxy .*--auto-iam-authn .*--http-port ${HTTP_PORT}( |$)" >/dev/null
 }

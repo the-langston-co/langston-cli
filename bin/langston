@@ -155,7 +155,7 @@ elif [[ $COMMAND == 'update' ]]; then
   "$SCRIPTS_DIR/configure/update-check.sh"
 elif [[ $COMMAND == 'download' ]]; then
   "$SCRIPTS_DIR/configure/download.sh"
-elif [[ $COMMAND == 'auth' ]]; then
+elif [[ $COMMAND == 'login' || $COMMAND == 'auth' ]]; then
   "$SCRIPTS_DIR/configure/auth.sh" $PROGRAM
 elif [[ $COMMAND == 'fetch' ]]; then
   echo "Using Fetch..."

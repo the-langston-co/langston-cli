@@ -1,39 +1,48 @@
 #!/bin/zsh
+# `langston login` (alias: `langston auth`). Signs this machine in to Google.
+#
+# Opens the browser only when there is no working sign-in, so Fetch can run it
+# on every launch. Pass --force to sign in again, for example to switch accounts.
+#
+# The sign-in replaces the service account key this command used to download:
+# database and Cloud Storage access now belong to the person's own account.
 
-ENV=${1:='prod'}
-echo
-echo "🔑 Please enter the service account password ($ENV):"
+SCRIPT_DIR=${0:A:h}
+source "$SCRIPT_DIR/google-auth.sh"
 
-read -r PASSWORD
-
-echo
-echo -e "🔒 Got it! Downloading the $ENV service account file..."
-
-HOST="https://api.thelangstonco.com"
-if [[ $ENV == 'stage' ]]; then
-  HOST="https://api.stage.thelangstonco.com"
-elif [[ $ENV == 'dev' ]]; then
-  HOST="http://localhost:3000"
-elif [[ $ENV == 'prod' ]]; then
-  HOST="https://api.thelangstonco.com"
+if ! command -v gcloud >/dev/null 2>&1; then
+  "$SCRIPT_DIR/../fetch/install-gcloud.sh" || exit 1
+  # install-gcloud.sh adds gcloud to the PATH through .zshrc.
+  . "$HOME/.zshrc"
 fi
 
-echo "Requesting service account data from $HOST"
+is_work_account() {
+  [[ "$1" == *"@$GOOGLE_ACCOUNT_DOMAIN" ]]
+}
 
-OUT_DIR="$HOME/langston-cli/auth"
-OUT_FILE="$OUT_DIR/db-service-account-$ENV.json"
-# Create output directory if it doesn't exist
-mkdir -p "${OUT_DIR}"
-
-http_response=$(curl --location "$HOST/db-service-account" --header 'Content-Type: application/json' --data "{\"password\": \"$PASSWORD\"}" -o "$OUT_FILE" -w "%{http_code}" -s)
-
-echo
-
-if [ "$http_response" != "200" ]; then
-  echo "⚠️ Unable to get the service account file: $(jq .message <<< $(cat $OUT_FILE))"
-  rm "$OUT_FILE"
-else
-  echo "✅  Service account file saved to $OUT_FILE"
+if [[ "$1" != '--force' ]] && google_signed_in && is_work_account "$(google_account)"; then
+  echo "✅  Signed in to Google as $(google_account)"
+  exit 0
 fi
 
 echo
+echo "🔑  Opening your browser to sign in to Google."
+echo "    Choose your @$GOOGLE_ACCOUNT_DOMAIN account, then click Allow."
+echo
+
+if ! gcloud auth login --update-adc; then
+  echo
+  echo "🛑  The Google sign-in did not finish. Run \"langston login\" to try again."
+  exit 1
+fi
+
+ACCOUNT=$(google_account)
+if ! is_work_account "$ACCOUNT"; then
+  echo
+  echo "🛑  You signed in as \"$ACCOUNT\", which is not a @$GOOGLE_ACCOUNT_DOMAIN account."
+  echo "    Run \"langston login --force\" and choose your work account."
+  exit 1
+fi
+
+echo
+echo "✅  Signed in to Google as $ACCOUNT"
